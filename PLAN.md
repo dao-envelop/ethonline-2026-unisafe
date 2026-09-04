@@ -195,6 +195,18 @@ Updated as work lands. Each entry links the commits that produced it.
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
 
+**4 Sep — D packaged and queued for deployment.** One esbuild bundle, 1.83 MB, in a Node image with
+`pg` and nothing else: no `node_modules`, no source tree, no npm at run time. `pg` stays external
+because it resolves its own backend by require, and inlining that is how a bundled Postgres client fails
+at connect instead of at build. The build refuses to ship an artifact containing a DSN, a key inside a
+URL or an assigned secret — this service holds no keys, but it is built in a tree with `.env` files next
+door and a credential baked into a layer outlives the process that used it.
+
+The deployment task carries one instruction that matters more than the rest: **nothing that can sign may
+go into its environment file**. No operator key, no keystore path, no password for one. The whole point
+of the split is that this process cannot produce a signature, and an environment file is the one place
+that could be undone by accident.
+
 **4 Sep — D suggests, and refuses to guess.** `rank_pools` scores every pool a manager is configured
 with by fee APR over the last complete day; `suggest_move` compares the position's pool against the rest
 and returns the numbers for a move when the gap is worth it.
