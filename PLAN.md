@@ -189,11 +189,23 @@ Updated as work lands. Each entry links the commits that produced it.
 | Workstream | Status | Landed |
 |---|---|---|
 | A — `moveLiquidity` | ✅ implemented | `5a77c41` → `cc7d732` on `task/051-cross-pool-move` |
-| B — Substreams package | 🟡 builds, runs live, verified against the oracle | `1803105` → `55fa54c` |
+| B — Substreams package | 🟡 `db_out` done, sink not yet running | `1803105` → `60bc456` |
 | C — local MCP slimmed | ⬜ not started | — |
 | D — hosted service | ⬜ not started | — |
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
+
+**4 Sep — B writes rows.** `db_out` emits `DatabaseChanges` for twelve tables, and the schema they land
+in is defined and reviewed rather than whatever the sink happened to produce. Verified live on Arbitrum:
+the row for block 486,482,005 carries the same pool, salt and ticks that `map_positions` produced, now in
+the shape the sink applies. The database itself is up — a dedicated role and database on our existing
+Postgres, four schemas, one per network, reachable only over the private network.
+
+Two manifest lessons, both found by running rather than reading: importing the SQL protodefs package
+alongside the database-changes one collides on `sf.substreams.sink.sql.v1.Service`, because the sink
+Service type already lives inside the CLI; and changing `imports` invalidates cached module outputs,
+because module hashes cover the package's proto definitions — a 338k-block store backfill ran a second
+time to prove it.
 
 **4 Sep — B runs against a live chain.** Toolchain in (rustc 1.98.1 + wasm32, substreams 1.22.0, protoc
 36.1); the package builds, packs without warnings, and was run against Arbitrum One with a real key.
