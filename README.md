@@ -136,6 +136,11 @@ anything is signed.
 
 **Arc** — deployment and addresses _(pending)_
 
+**Storage** — [`db/schema.sql`](db/schema.sql): what the Substreams SQL sink writes. Twelve tables —
+eleven event types plus `position_delta`, the one that actually models a position. Identity is
+`(transaction_hash, log_index)`, the log's position in the chain, which is what makes a replay
+idempotent.
+
 ## Status
 
 | | | |
