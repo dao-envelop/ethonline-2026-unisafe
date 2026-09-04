@@ -189,11 +189,33 @@ Updated as work lands. Each entry links the commits that produced it.
 | Workstream | Status | Landed |
 |---|---|---|
 | A — `moveLiquidity` | ✅ implemented | `5a77c41` → `cc7d732` on `task/051-cross-pool-move` |
-| B — Substreams package | 🟡 scaffolded, not yet built | `1803105` |
+| B — Substreams package | 🟡 builds, runs live, verified against the oracle | `1803105` → `55fa54c` |
 | C — local MCP slimmed | ⬜ not started | — |
 | D — hosted service | ⬜ not started | — |
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
+
+**4 Sep — B runs against a live chain.** Toolchain in (rustc 1.98.1 + wasm32, substreams 1.22.0, protoc
+36.1); the package builds, packs without warnings, and was run against Arbitrum One with a real key.
+
+Both runs were cross-checked against the Envelop history API — the production indexer this package is
+meant to eventually replace — on the same manager `0x60723973…264b`:
+
+| Module | Block | Decoded |
+|---|---:|---|
+| `map_raw_events` | 487,466,603 | `OperatorSet`: operator `0xd5228c94…`, allowed |
+| `map_positions` | 486,482,005 | first position: pool `0x70bf44c3…`, salt `0x8cd1b9d4…`, range `[58920, 70920]`, liquidity `+717932` |
+
+Pool, salt and timestamp match the oracle's record of that position exactly, and the delta is positive
+because it is an open. Worth noting what the two rows show together: the `emitter` of the position row is
+the v4 `PoolManager` while the `manager` is the `sender` — which is the whole reason positions are read
+from Uniswap's logs rather than from the manager's own events.
+
+Added `index_events`, a block-index module emitting `evt:<name>` and `mgr:<address>`. Billing is per block
+processed and these managers touch a tiny fraction of blocks, so this is the largest cost lever the
+platform offers. Backfilling the store to the block above cost ~340k blocks of the 7M free tier, which
+puts a number on why it matters. The manifest also gained a `networks` block, so one manifest covers
+mainnet, arbitrum-one, base and unichain rather than four copies of it.
 
 **4 Sep — B scaffolded.** Protobuf, ABIs, four modules and the manifest are in
 [ethonline-2026-substreams-v4-lp](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp).

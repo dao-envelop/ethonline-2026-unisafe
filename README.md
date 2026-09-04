@@ -127,6 +127,7 @@ anything is signed.
   — the four modules; the registry is built from the factory's deployment event, not an address list
 - [`substreams.yaml`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/substreams.yaml)
   — factory address as the only parameter, per-chain table in that repo's README
+- verified against Arbitrum One and cross-checked with the production oracle — see that repo's README
 - the hosted MCP service reading it live _(pending)_
 
 **Chainlink** — price feeds gating operator swaps:
@@ -140,7 +141,7 @@ anything is signed.
 | | | |
 |---|---|---|
 | A | `moveLiquidity` | ✅ implemented, 254 tests green |
-| B | Substreams package | 🟡 scaffolded |
+| B | Substreams package | 🟡 running live |
 | C | Local MCP slimmed + `move` | ⬜ not started |
 | D | Hosted read/strategy MCP | ⬜ not started |
 | E | Arc deployment | ⬜ not started |
