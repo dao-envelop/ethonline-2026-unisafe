@@ -190,10 +190,35 @@ Updated as work lands. Each entry links the commits that produced it.
 |---|---|---|
 | A — `moveLiquidity` | ✅ implemented | `5a77c41` → `cc7d732` on `task/051-cross-pool-move` |
 | B — Substreams package | 🟡 `db_out` done, sink not yet running | `1803105` → `60bc456` |
-| C — local MCP slimmed | ⬜ not started | — |
+| C — local MCP slimmed | 🟡 written, not published | `84bc0bb` on `task/088-mcp-slim-move` |
 | D — hosted service | 🟡 reads and strategy work; deploy next | `a8f2ab9` → `a28c623` on `task/087-lp-insight-service` |
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
+
+**4 Sep — C written, deliberately not published.** The local server is now the half that holds the key
+and nothing else: `get_position_history`, `list_operators` and `get_portfolio` left for the hosted
+service, and `propose_move` / `execute_move` arrived. After the split it makes **no outbound HTTP call
+except RPC** — which is the whole point, because "a remote service cannot hand you calldata to sign"
+stops being a promise in the documentation and becomes a property of the architecture.
+
+`propose_move` refuses a destination outside the manager's configured pools rather than building a
+proposal that cannot execute: the set is fixed when the manager is created and the contract reverts
+`UnknownPool` for anything else. The planner needed its own file, because a move gets its numbers from a
+different place than a recenter — the contract sizes a recenter from the freed deltas it measures itself,
+while a move goes through the allocate path and sizes from `amount*Desired` supplied by the caller. So
+the caller has to predict what the position frees, declare what it holds *after* any pre-swap rather than
+before, and shade the result down: declaring more than the manager ends up holding reverts the whole
+unlock, declaring less leaves a few basis points idle for the next allocate.
+
+A real defect fixed on the way: `policy.maxAmountPerTx` only ever populated for `allocate`, so the one
+quantitative limit in a default-deny policy did nothing on recenter — which moves an entire principal —
+nor on claim or reinvest. It now applies everywhere, and what it measures is stated: **how much moves in
+one transaction**, not how much leaves, since an operator has no path outward at all and a cap on outflow
+would bound a number that is always zero.
+
+**Not published, on purpose.** Versions are aligned at 1.0.0 and the plugin declares both servers, but
+the registry release waits until the hosted service is actually answering — publish first and users lose
+their history between two releases.
 
 **4 Sep — D packaged and queued for deployment.** One esbuild bundle, 1.83 MB, in a Node image with
 `pg` and nothing else: no `node_modules`, no source tree, no npm at run time. `pg` stays external
