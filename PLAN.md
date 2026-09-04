@@ -191,9 +191,34 @@ Updated as work lands. Each entry links the commits that produced it.
 | A — `moveLiquidity` | ✅ implemented | `5a77c41` → `cc7d732` on `task/051-cross-pool-move` |
 | B — Substreams package | 🟡 `db_out` done, sink not yet running | `1803105` → `60bc456` |
 | C — local MCP slimmed | ⬜ not started | — |
-| D — hosted service | 🟡 reads and both surfaces work; strategy and deploy next | `a8f2ab9` → `9ce4749` on `task/087-lp-insight-service` |
+| D — hosted service | 🟡 reads and strategy work; deploy next | `a8f2ab9` → `a28c623` on `task/087-lp-insight-service` |
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
+
+**4 Sep — D suggests, and refuses to guess.** `rank_pools` scores every pool a manager is configured
+with by fee APR over the last complete day; `suggest_move` compares the position's pool against the rest
+and returns the numbers for a move when the gap is worth it.
+
+Two rules run through both. **Only the manager's own pools are candidates** — `moveLiquidity` can name a
+pool only if the owner fixed it into the set at creation, so the candidates come from the manager on
+chain rather than from a market-wide ranking that would look smarter and be useless. And **the output is
+numbers, never calldata**: a pool id, two ticks and an amount, which the local server re-derives against
+chain state and puts through the same policy and oracle guard as a hand-written call. A test asserts the
+response contains nothing resembling a transaction.
+
+It refuses in three places rather than guessing. A pool it could not score is listed separately with a
+reason instead of being dropped or scored zero. One pool's failed lookup does not lose the rest of the
+ranking. And when the *current* pool cannot be scored it holds — comparing against an assumed zero would
+make every unmeasurable pool look worth leaving, which is exactly backwards.
+
+Live against the Arbitrum manager it does precisely that: reads the four configured pools and the open
+position, ranks none of them because that chain has no v4 analytics subgraph, and holds. Honest, and a
+reminder for the demo — the ranking has data on Unichain and Base, not on Arbitrum.
+
+Every suggestion carries the full ranking and five caveats, which are part of the answer rather than a
+disclaimer: an agent reading one APR number will treat it as a forecast unless told that fees already
+earned are realised by the move, that impermanent loss is not in the comparison, and that the default
+range is a symmetric guess.
 
 **4 Sep — D answers, over both surfaces.** The service exists as `insight/`, a second package beside the
 local MCP server in the frontend repository, because it needs exactly the modules that server is

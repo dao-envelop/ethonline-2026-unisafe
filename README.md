@@ -146,7 +146,7 @@ tables — eleven event types plus `position_delta`, the one that actually model
 | A | `moveLiquidity` | ✅ implemented, 254 tests green |
 | B | Substreams package | 🟡 running live |
 | C | Local MCP slimmed + `move` | ⬜ not started |
-| D | Hosted read/strategy MCP | 🟡 reads working |
+| D | Hosted read/strategy MCP | 🟡 reads + strategy working |
 | E | Arc deployment | ⬜ not started |
 | — | Demo video | ⬜ not started |
 
