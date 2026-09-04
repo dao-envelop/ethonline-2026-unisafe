@@ -121,7 +121,12 @@ anything is signed.
 - `FEEDBACK.md` — what was awkward about building on v4 _(pending)_
 
 **The Graph** — the package and what consumes it:
-- `substreams.yaml`, `proto/`, `src/lib.rs` in the Substreams repo _(pending)_
+- [`proto/envelop/lp/v1/lp.proto`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/proto/envelop/lp/v1/lp.proto)
+  — one message type per event, amounts as base-unit decimal strings
+- [`src/lib.rs`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/src/lib.rs)
+  — the four modules; the registry is built from the factory's deployment event, not an address list
+- [`substreams.yaml`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/substreams.yaml)
+  — factory address as the only parameter, per-chain table in that repo's README
 - the hosted MCP service reading it live _(pending)_
 
 **Chainlink** — price feeds gating operator swaps:
@@ -135,7 +140,7 @@ anything is signed.
 | | | |
 |---|---|---|
 | A | `moveLiquidity` | ✅ implemented, 254 tests green |
-| B | Substreams package | ⬜ not started |
+| B | Substreams package | 🟡 scaffolded |
 | C | Local MCP slimmed + `move` | ⬜ not started |
 | D | Hosted read/strategy MCP | ⬜ not started |
 | E | Arc deployment | ⬜ not started |

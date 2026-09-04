@@ -189,11 +189,31 @@ Updated as work lands. Each entry links the commits that produced it.
 | Workstream | Status | Landed |
 |---|---|---|
 | A — `moveLiquidity` | ✅ implemented | `5a77c41` → `cc7d732` on `task/051-cross-pool-move` |
-| B — Substreams package | ⬜ not started | — |
+| B — Substreams package | 🟡 scaffolded, not yet built | `1803105` |
 | C — local MCP slimmed | ⬜ not started | — |
 | D — hosted service | ⬜ not started | — |
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
+
+**4 Sep — B scaffolded.** Protobuf, ABIs, four modules and the manifest are in
+[ethonline-2026-substreams-v4-lp](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp).
+Nothing has been compiled yet — there is no Rust toolchain on the build machine — and the commit says so
+rather than implying otherwise.
+
+The design decision worth recording: the manager registry is built from the **factory's own deployment
+event**, not from an address list, so the package works for any manager that factory produced on any
+chain. That is also what lets `map_events` answer a question the pipeline it replaces cannot — whether the
+contract that emitted a log is really one of ours. `OperatorSet(address,bool)` is a generic signature, and
+the existing poller's event table has no address column, so a signature matches network-wide; hence its
+explicit do-not-index list. Here it is one map step.
+
+Positions come from Uniswap's `ModifyLiquidity` logs rather than the manager's own events, because the
+manager's events cannot describe a position: `Allocated` carries a leg count, no manager event carries
+amounts, and for the volatile product nothing on chain links a salt to its pool.
+
+Next: toolchain, first build, then `db_out`, `graph_out` and a `blockIndex` module — the last is the
+biggest cost lever there is, since billing is per block processed and managers are active in a tiny
+fraction of them.
 
 **4 Sep — A landed.** `moveLiquidity` implemented, 17 tests for it, 254 green overall.
 
