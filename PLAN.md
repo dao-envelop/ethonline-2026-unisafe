@@ -93,7 +93,7 @@ version first, measure, and only then decide whether an optional third-pool swap
 
 ### B — Substreams package
 
-**Repo:** [substreams-uniswap-v4-lp](https://github.com/dao-envelop/substreams-uniswap-v4-lp)
+**Repo:** [substreams-uniswap-v4-lp](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp)
 
 A reusable package that decodes the event surface of the *class* "LP manager on top of Uniswap v4" into
 typed protobuf — one message type per event, never raw bytes or JSON — with a store keyed off manager
@@ -183,12 +183,34 @@ Updated as work lands. Each entry links the commits that produced it.
 
 | Workstream | Status | Landed |
 |---|---|---|
-| A — `moveLiquidity` | 🟡 in progress | — |
+| A — `moveLiquidity` | ✅ implemented | `5a77c41` → `cc7d732` on `task/051-cross-pool-move` |
 | B — Substreams package | ⬜ not started | — |
 | C — local MCP slimmed | ⬜ not started | — |
 | D — hosted service | ⬜ not started | — |
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
+
+**4 Sep — A landed.** `moveLiquidity` implemented, 17 tests for it, 254 green overall.
+
+Measured, from equal fresh state: one unlock **337,035** gas against **381,744 + 21,000** for
+`withdrawTo` then `allocate` — about **66k saved**, and the idle window between the two transactions
+gone. The first version of that benchmark ran both paths in one test and made the move look 37% *more*
+expensive; whichever path goes second inherits the other's warm storage, which is worth more than the
+difference being measured. Two tests from identical state, logging rather than asserting.
+
+The EIP-170 budget decided the shape of the API, exactly as the plan warned it might. The array form —
+many pulls, many adds — needs its own calldata-to-memory encoder and memory decoder for arrays of
+structs, and that pair cost **947 bytes against 858 of headroom**. So the operation moves one position
+to one destination; an operator repeats the call to move several. Cutting duplication paid for the rest:
+`_allocateLegV` and `_rebalanceSwap` held the same five lines — swap, full-fill guard, minimum-out floor,
+oracle check — and now share one `_guardedSwap`, which returned 233 bytes and leaves a single place where
+those guards can drift. Final sizes: Volatile 24,432 (144 free), OpenVolatile 24,372 (204), Stable 24,178
+(398).
+
+Removing liquidity realises accrued fees, and only the claim path used to say so — which is why a
+recenter or a withdrawal silently reset lifetime fee counters downstream. `_pullLiquidity` now emits the
+same `FeesCollected` event with the same gross amounts, so every path that realises fees reports them and
+no consumer has to change.
 
 **4 Sep.** Plan published. Reconnaissance corrected three things we believed and would have got wrong:
 the operation code we intended to use was already free under a different number than the docs claimed;

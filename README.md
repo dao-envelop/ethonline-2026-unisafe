@@ -61,7 +61,7 @@ against a Chainlink feed.
 | Repository | What is in it |
 |---|---|
 | [dao-envelop/uni-smart-wallet](https://github.com/dao-envelop/uni-smart-wallet) | Solidity contracts. `StableLPManager`, `VolatileLPManager`, `OpenVolatileLPManager`, the factory, `UniLens`, `ChainlinkPriceOracle`. **`moveLiquidity` lands here.** |
-| [dao-envelop/substreams-uniswap-v4-lp](https://github.com/dao-envelop/substreams-uniswap-v4-lp) | Substreams package for the LP-manager event class. |
+| [dao-envelop/ethonline-2026-substreams-v4-lp](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp) | Substreams package for the LP-manager event class. |
 | [dao-envelop/unisafe](https://github.com/dao-envelop/unisafe) | The dApp and both MCP servers (mirror of the GitLab repo below). |
 | [gitlab.com/envelop/protocol-v2](https://gitlab.com/envelop/protocol-v2) | Upstream home of the contracts and the frontend. Both public. |
 
@@ -110,11 +110,14 @@ anything is signed.
 
 *Filled in as each piece lands — see [Status](#status).*
 
-**Uniswap** — the new operation and the test that justifies it:
-- `src/VolatileLPManager.sol` — `moveLiquidity` and its handler _(pending)_
-- `test/CrossPoolUnlock.t.sol` — proof that v4 permits several pools in one `unlock` _(pending)_
-- `test/VolatileLPManagerMove.t.sol` — behaviour, invariants, and the gas comparison against two
-  transactions _(pending)_
+**Uniswap** — the new operation and the test that justifies it, on branch `task/051-cross-pool-move`:
+- [`src/VolatileLPManager.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/task/051-cross-pool-move/src/VolatileLPManager.sol)
+  — `moveLiquidity`, its `_handleMove` handler, and `_guardedSwap`, the one swap path allocate, recenter
+  and move all share
+- [`test/CrossPoolUnlock.t.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/task/051-cross-pool-move/test/CrossPoolUnlock.t.sol)
+  — manager-free proof that v4 permits several pools in one `unlock`, written before the manager was touched
+- [`test/VolatileLPManagerMove.t.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/task/051-cross-pool-move/test/VolatileLPManagerMove.t.sol)
+  — 17 tests: behaviour, the oracle matrix, the "nothing leaves the manager" check, and the gas benchmark
 - `FEEDBACK.md` — what was awkward about building on v4 _(pending)_
 
 **The Graph** — the package and what consumes it:
@@ -131,7 +134,7 @@ anything is signed.
 
 | | | |
 |---|---|---|
-| A | `moveLiquidity` | 🟡 in progress |
+| A | `moveLiquidity` | ✅ implemented, 254 tests green |
 | B | Substreams package | ⬜ not started |
 | C | Local MCP slimmed + `move` | ⬜ not started |
 | D | Hosted read/strategy MCP | ⬜ not started |
