@@ -131,14 +131,16 @@ anything is signed.
 
 | | | |
 |---|---|---|
-| A | `moveLiquidity` | ⬜ not started |
+| A | `moveLiquidity` | 🟡 in progress |
 | B | Substreams package | ⬜ not started |
 | C | Local MCP slimmed + `move` | ⬜ not started |
 | D | Hosted read/strategy MCP | ⬜ not started |
 | E | Arc deployment | ⬜ not started |
 | — | Demo video | ⬜ not started |
 
-Event runs 4–13 September 2026. This page is updated as work lands.
+Event runs 4–13 September 2026. The full plan, the reasoning behind each decision and a dated progress
+log are in **[PLAN.md](PLAN.md)** — published before the work, and corrected in place when reality
+disagrees with it.
 
 ## Demo
 
@@ -146,9 +148,22 @@ _Video and transaction hashes go here._
 
 ---
 
+## Rules and disclosure
+
+- **Continuity.** Submitted under *Extend Open Source*. Pre-existing work is listed above; only work done
+  between 4 and 13 September 2026 is offered for judging.
+- **History.** Work is committed incrementally as it happens, in the repositories linked above. No squashed
+  dumps.
+- **AI usage.** Disclosed in **[AI_USAGE.md](AI_USAGE.md)**, including what the tooling did, what it did
+  not decide, and where it was wrong.
+- **Dependencies.** Open-source and named: Uniswap v4 core and periphery, OpenZeppelin, Foundry, the
+  Substreams SDKs, viem, Next.js.
+- [ETHGlobal rules and code of conduct](https://ethglobal.com/rules).
+
 ## Links
 
 - Live app — https://unisafe.envelop.is
+- Plan and progress log — [PLAN.md](PLAN.md)
 - Contracts — https://github.com/dao-envelop/uni-smart-wallet
 - Envelop — https://envelop.is
 
