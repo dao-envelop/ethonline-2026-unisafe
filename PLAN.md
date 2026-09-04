@@ -195,6 +195,16 @@ Updated as work lands. Each entry links the commits that produced it.
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
 
+**4 Sep — packaged and queued for the sink.** The package is published as a release
+([v0.1.0](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/releases/tag/v0.1.0)), so the
+sink takes a URL and the production host needs no Rust toolchain at all.
+
+The quota decides the shape of the first load. A full Arbitrum backfill from the factory's block to the
+chain head is 15.5M blocks against a 7M free tier, so the first run covers a **bounded window**,
+486,400,000 → 487,600,000: the manager's creation, its first position, and the operator being appointed.
+Roughly 1.2M blocks for the whole interesting stretch of history. Following the chain head on Arbitrum is
+not affordable yet and the task says so rather than leaving it to be discovered when the key runs dry.
+
 **4 Sep — B writes rows.** `db_out` emits `DatabaseChanges` for twelve tables, and the schema they land
 in is defined and reviewed rather than whatever the sink happened to produce. Verified live on Arbitrum:
 the row for block 486,482,005 carries the same pool, salt and ticks that `map_positions` produced, now in
