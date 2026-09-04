@@ -17,8 +17,8 @@ trust, enforces that, and operator swaps are additionally checked against a Chai
 operator cannot do today is move capital to a *different pool* atomically. That takes two transactions,
 `withdrawTo` then `allocate`, and between them the capital sits idle.
 
-`moveLiquidity` collapses that into one call: pull from one or more pools, add to others, inside a single
-Uniswap v4 `unlock`, with one settlement pass.
+`moveLiquidity` collapses that into one call: free a position in one pool and re-deploy it in another,
+inside a single Uniswap v4 `unlock`, with one settlement pass.
 
 Around it, four supporting pieces that together make the operation usable by an agent rather than only
 by a human reading a block explorer:
@@ -68,9 +68,9 @@ crosses pools of the owner-fixed set) without widening the *class* of things an 
 
 One new operator entry point on `VolatileLPManager` (and its `OpenVolatileLPManager` subclass; the
 stablecoin manager is deliberately untouched — its range is fixed at init and the operation does not fit
-its model). Handler shape: pull each source position, add each destination leg through the existing
-allocate path — which already carries the pre-swap, the full-fill guard, the minimum-out floor and the
-oracle check — then settle once.
+its model). Handler shape: free the source position, re-deploy through the existing allocate path — which
+already carries the pre-swap, the full-fill guard, the minimum-out floor and the oracle check — then
+settle once.
 
 Why it is legal in v4, and why we checked before writing it: deltas are keyed by `(address, currency)`
 rather than by pool, and `unlock` verifies exactly one thing on exit — that no non-zero delta remains.
@@ -87,9 +87,14 @@ Two things this must get right that the existing code got wrong:
   its per-transaction cap does not currently bite on any other operation. Moving across two pools makes
   that gap obvious; the fix is to make each operation report its own spend.
 
-**Hard constraint:** EIP-170. The volatile manager has 858 bytes of headroom and its subclass 918, and
-because the subclass inherits everything, every byte is spent twice. Order of work is therefore: minimal
-version first, measure, and only then decide whether an optional third-pool swap array fits.
+**Hard constraint:** EIP-170. The volatile manager had 858 bytes of headroom and its subclass 918, and
+because the subclass inherits everything, every byte is spent twice.
+
+**What that constraint decided (4 Sep).** The intended shape — arrays of pulls and arrays of adds — cost
+947 bytes against 858, because arrays of structs need their own calldata-to-memory encoder and memory
+decoder. The operation therefore takes **one source and one destination**; an operator repeats the call to
+move several positions. Deduplicating the swap path returned 233 bytes and paid for the rest. Final:
+Volatile 24,432 (144 free), OpenVolatile 24,372 (204), Stable 24,178 (398).
 
 ### B — Substreams package
 
