@@ -191,9 +191,39 @@ Updated as work lands. Each entry links the commits that produced it.
 | A — `moveLiquidity` | ✅ implemented | `5a77c41` → `cc7d732` on `task/051-cross-pool-move` |
 | B — Substreams package | 🟡 `db_out` done, sink not yet running | `1803105` → `60bc456` |
 | C — local MCP slimmed | ⬜ not started | — |
-| D — hosted service | ⬜ not started | — |
+| D — hosted service | 🟡 reads and both surfaces work; strategy and deploy next | `a8f2ab9` → `9ce4749` on `task/087-lp-insight-service` |
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
+
+**4 Sep — D answers, over both surfaces.** The service exists as `insight/`, a second package beside the
+local MCP server in the frontend repository, because it needs exactly the modules that server is
+shedding. One process, two surfaces over the same functions: MCP over HTTP for an agent, REST for the
+app. No key, no signer — by construction rather than by omission.
+
+Verified live end to end, not just typechecked: `tools/list` returns both tools with their schemas, and
+`tools/call` returns the same position we have been checking all evening — pool `0x70bf44c3…`, lifetime
+fees 41 / 21904 across six events — with `source: "oracle"` and an empty degradation trail, because with
+no database configured the index is left out of the cascade entirely rather than present-and-failing on
+every request.
+
+The cascade is the substance. Preference order is configuration; falling back is not — there is no
+manual toggle, because a toggle gets set once and then never revisited while the index quietly falls
+behind. Every answer carries which source served it, how current that source is, and why the ones ahead
+of it did not. And the rule everything rests on: **an empty answer is an answer, an unavailable source is
+not**. Collapsing those two is how an empty index looks broken and a broken one looks empty.
+
+One consequence of that rule is worth stating because it is not obvious: the index **declines** for a
+manager it has never seen, instead of reporting an empty history. For a manager it knows, no rows is a
+real answer; for one it has never seen, ingestion not having reached the deployment is far more likely
+than a manager that has done nothing in its life — and answering "no history" there would be a confident
+lie.
+
+A test caught a real ordering bug on the way: events were merged by timestamp, and a recenter shares both
+block and timestamp with the fees it realises, so their order was undefined. Ordering is now by
+`(block_number, log_index)`, which is the only total order there is — and the only one that exists at all
+on the chains with no block-time feed.
+
+Still to come here: `rank_pools` and `suggest_move`, then deployment behind Cloudflare.
 
 **4 Sep — packaged and queued for the sink.** The package is published as a release
 ([v0.1.0](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/releases/tag/v0.1.0)), so the
