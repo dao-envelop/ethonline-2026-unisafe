@@ -62,7 +62,7 @@ against a Chainlink feed.
 |---|---|
 | [dao-envelop/uni-smart-wallet](https://github.com/dao-envelop/uni-smart-wallet) | Solidity contracts. `StableLPManager`, `VolatileLPManager`, `OpenVolatileLPManager`, the factory, `UniLens`, `ChainlinkPriceOracle`. **`moveLiquidity` lands here.** |
 | [dao-envelop/ethonline-2026-substreams-v4-lp](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp) | Substreams package for the LP-manager event class. |
-| [dao-envelop/unisafe](https://github.com/dao-envelop/unisafe) | The dApp and both MCP servers (mirror of the GitLab repo below). |
+| [gitlab.com/envelop/protocol-v2/stablelp-ui](https://gitlab.com/envelop/protocol-v2/stablelp-ui) | The dApp and both MCP servers — the local signer (`mcp/`) and the hosted read/strategy service (`insight/`). Public. |
 | [gitlab.com/envelop/protocol-v2](https://gitlab.com/envelop/protocol-v2) | Upstream home of the contracts and the frontend. Both public. |
 
 > Specific file-and-line pointers for each track are in [Where to look](#where-to-look), so you do not
@@ -110,15 +110,15 @@ anything is signed.
 
 *Filled in as each piece lands — see [Status](#status).*
 
-**Uniswap** — the new operation and the test that justifies it, on branch `task/051-cross-pool-move`:
-- [`src/VolatileLPManager.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/task/051-cross-pool-move/src/VolatileLPManager.sol)
+**Uniswap** — the new operation and the test that justifies it, on `master` and deployed on all five chains:
+- [`src/VolatileLPManager.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/src/VolatileLPManager.sol)
   — `moveLiquidity`, its `_handleMove` handler, and `_guardedSwap`, the one swap path allocate, recenter
   and move all share
-- [`test/CrossPoolUnlock.t.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/task/051-cross-pool-move/test/CrossPoolUnlock.t.sol)
+- [`test/CrossPoolUnlock.t.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/test/CrossPoolUnlock.t.sol)
   — manager-free proof that v4 permits several pools in one `unlock`, written before the manager was touched
-- [`test/VolatileLPManagerMove.t.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/task/051-cross-pool-move/test/VolatileLPManagerMove.t.sol)
+- [`test/VolatileLPManagerMove.t.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/test/VolatileLPManagerMove.t.sol)
   — 17 tests: behaviour, the oracle matrix, the "nothing leaves the manager" check, and the gas benchmark
-- `FEEDBACK.md` — what was awkward about building on v4 _(pending)_
+- [`FEEDBACK.md`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/FEEDBACK.md) — the seven things that cost us time building over v4
 
 **The Graph** — the package and what consumes it:
 - [`proto/envelop/lp/v1/lp.proto`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/proto/envelop/lp/v1/lp.proto)
@@ -135,8 +135,13 @@ anything is signed.
 - the hosted service reads the index live at `unisafe.envelop.is/mcp`, with the fallback cascade below
 
 **Chainlink** — price feeds gating operator swaps:
-- `src/oracle/ChainlinkPriceOracle.sol` and `_guardSwap` in `src/BaseLPManager.sol`
-- feed wiring on Arc _(pending)_
+- [`src/oracle/ChainlinkPriceOracle.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/src/oracle/ChainlinkPriceOracle.sol)
+  and `_guardSwap` in [`src/BaseLPManager.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/src/BaseLPManager.sol)
+- the on-chain state change: a new `ChainlinkPriceOracle` deployed on all five chains on 8 September and
+  seeded with feeds, plus the spot branch added during the event — `check` with `amountIn == 0` compares
+  the pool's `slot0` against the Chainlink reference in both directions, which is what now gates an
+  operator's liquidity adds and not only its swaps
+- feed wiring on Arc _(pending — Arc mainnet has 30 feeds; see [Status](#status))_
 
 **Arc** — deployment and addresses _(pending)_
 
