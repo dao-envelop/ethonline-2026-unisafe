@@ -54,6 +54,51 @@ indexed data, proposes a better one, the local MCP server builds `moveLiquidity`
 policy and simulates it — and one transaction moves the liquidity, with every swap inside it verified
 against a Chainlink feed.
 
+## How it fits together
+
+```mermaid
+flowchart LR
+  subgraph chain["Chain — Ethereum · Unichain · Base · Arbitrum · Unichain Sepolia"]
+    MGR["StableLPManager / VolatileLPManager<br/>EIP-1167 clones, owner holds the NFT"]
+    V4["Uniswap v4 PoolManager"]
+    ORC["ChainlinkPriceOracle<br/>gates every operator swap and add"]
+    MGR -->|unlock, modifyLiquidity, swap| V4
+    MGR -->|check| ORC
+  end
+
+  subgraph local["Operator's machine"]
+    MCP["envelop-mcp-lp (local)<br/>holds the key · builds calldata<br/>policy · simulate · sign<br/>no outbound HTTP except RPC"]
+  end
+
+  subgraph hosted["unisafe.envelop.is"]
+    INS["lp-insight (hosted MCP + REST)<br/>history · yield · rank_pools · suggest_move<br/>no key, cannot sign"]
+    APP["The dApp"]
+  end
+
+  subgraph graph["The Graph"]
+    SUB["Substreams package<br/>map_events · map_positions"]
+    DB[("Postgres index<br/>db_out")]
+    SG["Substreams-powered subgraph<br/>graph_out"]
+    SUB --> DB
+    SUB --> SG
+  end
+
+  ORACLE["Envelop oracle API<br/>fallback source"]
+
+  V4 -.->|logs| SUB
+  MGR -.->|logs| SUB
+  DB --> INS
+  ORACLE -.->|when the index is behind or blind| INS
+  INS -->|numbers: pool id, ticks, amounts<br/>never calldata| MCP
+  MCP -->|one transaction: moveLiquidity| MGR
+  APP --> INS
+```
+
+The arrow that matters is the one from the hosted service to the local one: it carries **numbers, not
+calldata**. A pool id, two ticks and an amount, which the local server re-derives against chain state and
+puts through the same policy and oracle guard as a hand-written call. The component that can sign cannot
+be handed something to sign.
+
 ---
 
 ## Repositories
