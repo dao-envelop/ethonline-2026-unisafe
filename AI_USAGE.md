@@ -26,8 +26,13 @@ recommendation the model gave.
 
 The model does not decide what ships. Code it writes is reviewed, and it is regularly wrong in ways that
 matter: during planning for this project it asserted our repositories were private when they are public,
-and it proposed a design based on a branch it had not checked, which turned out to contain no code. Both
-were caught by verification, and both are recorded in the plan's log rather than tidied away.
+and it proposed a design based on a branch it had not checked, which turned out to contain no code. On 8
+September it started a verification run against Arbitrum — a chain the owner had explicitly excluded from
+indexing because of the block quota — and was stopped by the owner before the run cost anything. The same
+day it was wrong in the opposite direction too, believing a start block would keep a backfill cheap; the
+stores backfill from the manifest's `initialBlock` regardless, which is why Unichain is indexed from a
+recent block rather than from the factory. All four were caught by verification or by a person, and all
+four are recorded in the plan's log rather than tidied away.
 
 ## Prior work
 
