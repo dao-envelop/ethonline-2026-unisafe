@@ -198,8 +198,8 @@ tables — eleven event types plus `position_delta`, the one that actually model
 | | | |
 |---|---|---|
 | A | `moveLiquidity` | ✅ implemented, 254 tests green, **deployed on all five chains 8 Sep** (release 2.1.0) |
-| B | Substreams package | ✅ SQL sink live; `graph_out` + subgraph schema landed (v0.2.0) — Studio deployment pending |
-| C | Local MCP slimmed + `move` | 🟡 written, awaiting merge and release |
+| B | Substreams package | ✅ `graph_out` + subgraph schema landed (v0.2.1); sink and Studio deployment pending |
+| C | Local MCP slimmed + `move` | ✅ merged and published — `@envelop/mcp-lp` 1.0.0 |
 | D | Hosted read/strategy MCP | ✅ live in production behind `unisafe.envelop.is` |
 | E | Arc deployment | ⬜ not started |
 | — | Demo video | ⬜ not started |

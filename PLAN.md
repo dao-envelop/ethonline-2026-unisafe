@@ -189,11 +189,29 @@ Updated as work lands. Each entry links the commits that produced it.
 | Workstream | Status | Landed |
 |---|---|---|
 | A — `moveLiquidity` | ✅ implemented and deployed | `5a77c41` → `cc7d732`, in `master`; deploy `520f542` (8 Sep) |
-| B — Substreams package | ✅ sink live; `graph_out` landed | `1803105` → `7bac861`, release `v0.2.0` |
-| C — local MCP slimmed | 🟡 written, awaiting merge + release | `84bc0bb` on `task/088-mcp-slim-move` |
+| B — Substreams package | ✅ `graph_out` landed | `1803105` → `ef30502`, release `v0.2.1` |
+| C — local MCP slimmed | ✅ merged and published | `84bc0bb` → `a25ebd3`, tag `mcp-v1.0.0` |
 | D — hosted service | ✅ live in production | `task/087` + `task/089`, deployed from CI |
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
+
+**8 Sep — 1.0.0 is out, and the release gate failed for a reason worth keeping.**
+
+`@envelop/mcp-lp` 1.0.0 is in the registry: the local server now holds the key, builds calldata, checks
+its policy and signs — and nothing else. History, operators and pool ranking answer from the hosted
+service, which has been live since 5 September. The order was the point: publish first and users lose
+their history between two releases.
+
+The publish failed on its first attempt, and not on anything about the release. The publish script runs
+the root test suite as its gate — deliberately, because the bundle inlines planner code whose only tests
+live there — but the job installed dependencies for the root and the package, not for the hosted service
+whose tests joined that suite three days earlier. So the gate died on a missing `pg`. Worth recording
+because the gate did its job in the wrong way round: it is meant to stop a release whose shared half was
+never exercised, and instead it stopped one whose test runner was never installed.
+
+A second, smaller one on the way: `package.json` said 1.0.0 while `package-lock.json` still said 0.7.0.
+`npm ci` never compares them, so nothing failed until the release — which is exactly why the publish
+script compares them itself.
 
 **8 Sep — the contracts are on chain, and `graph_out` makes the composition real.**
 
