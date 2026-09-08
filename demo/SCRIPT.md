@@ -1,123 +1,129 @@
 # Demo video — script and shot list
 
-**Draft.** The chain the live transaction runs on is not settled yet; everything below assumes Unichain,
-where both new implementations are allowlisted in the factory and the new oracle is already seeded with
-feeds. Swap the chain and the addresses change, nothing else.
+Target length **2:50–3:20**. The through-line is an **agent operating real money under a contract-enforced
+boundary**: a person sets the manager up in the dApp, hands an agent the operator role, the agent does the
+work in conversation, and the dApp confirms what happened. No CLI, no curl — those prove the plumbing, not
+the product.
 
-Target length **2:40–3:20** (the tracks ask for 2–4 minutes). One take per section, screen capture with
-voice-over. No music under the terminal sections — the numbers are the point.
-
----
-
-## 0:00 – 0:25 · The gap, stated once
-
-**On screen:** the manager page at unisafe.envelop.is, one open position, in range.
-
-> A manager NFT owns Uniswap v4 liquidity. Whoever holds the NFT owns the funds, and can authorise an
-> operator — a bot, an agent — that may rebalance the position and can never withdraw it. That boundary is
-> in the contract, not in a promise.
->
-> The gap is what happens when a different pool becomes the better place to be. Today that is two
-> transactions: close here, open there. Two gas charges, two oracle checks at two different prices, and
-> between them a window where the capital earns nothing.
-
-**Cut to:** the two-transaction path in the UI, briefly, then stop.
+Chain: **Unichain** (both implementations allowlisted in the factory, oracle seeded with feeds, the index
+follows that chain live). Manager created fresh from the 2.1.0 implementation, so `moveLiquidity` exists on
+it.
 
 ---
 
-## 0:25 – 1:00 · What we built, in one sentence each
+## Act 1 · 0:00 – 0:50 · A person sets it up, by hand
 
-**On screen:** the architecture diagram from the README, then the four repos.
+**On screen:** unisafe.envelop.is. Create a manager with two pools, deposit, done. Real wallet, real
+signatures, at speed — this act is deliberately unglamorous.
 
-> `moveLiquidity`: one operator call that pulls liquidity out of one pool and adds it into another
-> inside a single Uniswap v4 `unlock`. It is possible because v4 keys deltas by address and currency
-> rather than by pool, and `unlock` checks exactly one thing on exit — that no non-zero delta remains.
-> Nothing in v4 forbids several pools in one callback; the documentation simply never says so. We proved
-> it with a standalone test before touching the manager.
->
-> Around it: a Substreams package that decodes the manager's events, feeding both a SQL index and a
-> subgraph; and a split of our MCP server into a hosted half that reads and reasons, and a local half
-> that holds the key.
+> A manager is an NFT that owns Uniswap v4 liquidity. Whoever holds the NFT owns the funds. I create one,
+> pick two pools, and deposit.
 
----
+**Then the beat the whole video rests on** — the Operators tab, adding the agent's address:
 
-## 1:00 – 1:45 · The Graph side, live
+> Now I give an agent the operator role. An operator can rebalance this manager and can never withdraw
+> from it. That is not a policy in the agent's prompt, it is the contract: there is no code path from an
+> operator to my principal. Every swap and every liquidity add it makes is also checked against a
+> Chainlink price — the manager rejects its own operator if the price is wrong.
 
-**On screen:** terminal. `substreams run … graph_out` against Unichain, showing entities appearing.
-Then the subgraph in Studio answering a query for the same manager.
-
-> One decoder, two Graph products. The SQL sink writes the eleven event tables our production schema
-> already has, so its rows can be compared row by row against the indexer it replaces. The subgraph gets
-> a model instead: managers, operators already folded into "who may act now", positions with running
-> liquidity and lifetime fees, and one timeline of everything a manager ever did.
->
-> Positions come from Uniswap's own `ModifyLiquidity` logs, not from the manager's events — because the
-> manager's events cannot describe a position. `Allocated` carries a leg count, no event carries amounts,
-> and for the volatile product nothing on chain links a position's salt to its pool.
-
-**Show:** the same position from both sources agreeing.
+Show the card that says the oracle is wired, and the warning next to the operator field: granting an
+operator is bounded, approving the NFT is not.
 
 ---
 
-## 1:45 – 2:40 · The move itself
+## Act 2 · 0:50 – 2:20 · The agent takes over
 
-**On screen:** an agent session against the hosted server, then the local one.
+**On screen:** an agent session with two MCP servers connected. Nothing typed but plain sentences.
 
-> The hosted service ranks the manager's own pools by fee APR — its own pools, because `moveLiquidity`
-> can only name a pool the owner fixed into the set when the manager was created. It refuses to guess:
-> a pool it cannot score is listed with a reason rather than scored zero, and when the *current* pool
-> cannot be scored it holds, because comparing against an assumed zero would make every unmeasurable
-> pool look worth leaving.
->
-> What it returns is numbers — a pool id, two ticks, an amount. Never calldata. The local server
-> re-derives that against chain state, puts it through the same policy and the same oracle guard as a
-> hand-written call, simulates it, and only then signs.
+**Beat 1 — it can see (0:50–1:20).** *"What does this manager hold, and what has it done?"*
 
-**Then:** `execute_move`, the transaction hash, the explorer.
+The answer comes back with positions, fees and a timeline — and says where it came from: our Substreams
+index, current to a block number.
 
-> One transaction. 337,035 gas against 381,744 plus a second 21,000 for the two-call path — about 66,000
-> saved, and the idle window gone. Every swap inside it verified against a Chainlink feed, and the
-> operator still cannot reach the principal.
+> The reading half runs on our server. It has no key and cannot sign anything. It answers from an index
+> we build from the chain with Substreams — the same package published on substreams.dev, filtered
+> through another published package's block index so it only opens blocks that concern us.
+
+**Beat 2 — it puts the money to work (1:20–1:45).** *"Deploy the idle balance."*
+
+Show the proposal: pools, ticks, amounts, and the policy verdict. Then approve, and the transaction lands.
+
+> The agent proposes; the local half checks it against a policy, simulates it, and only then signs. The
+> half that holds the key makes no outbound call except to the chain.
+
+**Beat 3 — it decides where to be (1:45–2:20).** *"Is this the best pool for it?"*
+
+The agent ranks the manager's own pools by fee APR and answers with a number, not an opinion — including
+the pools it could not score, and why.
+
+> It only considers pools the owner fixed into the manager at creation. It cannot invent a destination,
+> because the contract would reject one.
+
+Then: *"Move it."*
+
+> One transaction. Liquidity comes out of one pool, is swapped if it needs to be, and goes into another
+> inside a single Uniswap v4 unlock. Two transactions became one — about 66,000 gas less, and gone with
+> them is the window where the capital sat idle between closing and opening.
+
+**Show on screen while it executes:** the hosted service returned *numbers* — a pool id, two ticks, an
+amount — and the local server re-derived them against chain state before signing. Nothing that could be
+signed ever crossed the network.
 
 ---
 
-## 2:40 – 3:05 · What this does not do
+## Act 3 · 2:20 – 2:50 · Back to the dApp, which agrees
 
-Say it plainly; it is short, and it is what makes the rest credible.
+**On screen:** refresh the manager page. The position is in the new pool, with the new range. Open the
+history: it says **"From our index, current to block N"**.
 
-> Managers are non-upgradeable clones. Every manager that existed before this deployment keeps the
-> implementation it was created from, so `moveLiquidity` reaches managers created from today onward — not
-> the ones already live.
->
-> The index follows Ethereum and Unichain. Arbitrum stays on our own oracle, because a per-block quota
-> and quarter-second blocks are bad arithmetic, and pretending otherwise would just be a bill.
+> Same manager, same NFT, same owner. The agent moved the position and could never have taken it. And
+> the app is reading the same index the agent reasoned over — the caption says which source answered and
+> how current it is, because "from our index" and "read from your browser" are not the same promise.
 
 ---
 
-## 3:05 – 3:20 · Close
+## Act 4 · 2:50 – 3:10 · What this does not do
 
-**On screen:** the submission hub README.
+Short, plain, and the reason the rest is credible.
 
-> Contracts, the Substreams package, both MCP servers and the app are open, linked from one page, with
-> file-and-line pointers for each track. `FEEDBACK.md` says what building this over v4 actually cost.
+> Managers are non-upgradeable clones, so the cross-pool move reaches managers created from this
+> deployment onward — not the ones already live. The index follows Ethereum and Unichain; Arbitrum stays
+> on our own indexer, because per-block billing and quarter-second blocks are bad arithmetic. And the
+> ranking is fee APR over a completed day — it is not a forecast, and impermanent loss is not in it.
+
+---
+
+## Close · 3:10 – 3:20
+
+Repositories, file-and-line pointers per track, `FEEDBACK.md`.
 
 ---
 
 ## Shot checklist
 
-- [ ] Manager page with a live position (in range, real numbers)
-- [ ] `test/CrossPoolUnlock.t.sol` on screen for two seconds — the proof, not just the claim
-- [ ] `substreams run … graph_out` producing entities on Unichain
-- [ ] Studio subgraph answering the same question
-- [ ] Hosted `rank_pools` / `suggest_move` output, including a refusal
-- [ ] Local `propose_move` → simulate → `execute_move`
-- [ ] Explorer page for the transaction
+- [ ] Manager creation in the dApp — two pools, deposit, wallet signatures
+- [ ] Operators tab: adding the agent's address, oracle card visible
+- [ ] Agent answers a portfolio question with the index provenance visible
+- [ ] Agent proposes an allocate; the policy verdict and simulation on screen
+- [ ] Agent ranks pools, including a refusal with its reason
+- [ ] `propose_move` → `execute_move`, transaction hash, explorer
 - [ ] Gas comparison on screen as two numbers, not a claim in the voice-over
+- [ ] dApp after the move: new pool, new range, "From our index, current to block N"
+- [ ] Two seconds on `test/CrossPoolUnlock.t.sol` — the proof that several pools in one unlock is legal
 
-## Preconditions before recording
+## Preconditions
 
-1. A manager created from the 2.1.0 implementation, with at least two pools configured.
-2. Its oracle wired (`setPriceOracle`) and the operator authorised.
-3. Enough USDC on it to make the numbers legible on screen.
-4. The subgraph deployed in Studio and synced past the manager's creation block.
-5. Both sinks running, so "live data" is true at the moment of recording.
+1. ~~Manager created from the 2.1.0 implementation with at least two pools~~ — done (`0x7C77e35F…`).
+2. ~~Oracle wired and seeded~~ — done on Unichain.
+3. ~~Index following that chain~~ — done; `suggest_move` already answers on this manager (1.30% → 9.27%).
+4. **Operator wallet authorised on the manager** — the one the local MCP server holds. Not done.
+5. **Enough USDC on it that the numbers read on screen.** Not done.
+6. A second manager, created live in Act 1, so the video shows the setup rather than referring to it.
+   The one from precondition 1 stays as the rehearsal.
+
+## Things to avoid on camera
+
+- Any terminal that is not the agent session. curl proves plumbing; it undercuts the point.
+- Reading numbers the agent already said aloud.
+- Claiming "AI decides" where the contract decides. The interesting part is the opposite: what the agent
+  is *not* allowed to do, and who enforces it.
