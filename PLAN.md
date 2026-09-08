@@ -188,12 +188,56 @@ Updated as work lands. Each entry links the commits that produced it.
 
 | Workstream | Status | Landed |
 |---|---|---|
-| A — `moveLiquidity` | ✅ implemented | `5a77c41` → `cc7d732` on `task/051-cross-pool-move` |
-| B — Substreams package | 🟡 `db_out` done, sink not yet running | `1803105` → `60bc456` |
-| C — local MCP slimmed | 🟡 written, not published | `84bc0bb` on `task/088-mcp-slim-move` |
-| D — hosted service | 🟡 reads and strategy work; deploy next | `a8f2ab9` → `a28c623` on `task/087-lp-insight-service` |
+| A — `moveLiquidity` | ✅ implemented and deployed | `5a77c41` → `cc7d732`, in `master`; deploy `520f542` (8 Sep) |
+| B — Substreams package | ✅ sink live; `graph_out` landed | `1803105` → `7bac861`, release `v0.2.0` |
+| C — local MCP slimmed | 🟡 written, awaiting merge + release | `84bc0bb` on `task/088-mcp-slim-move` |
+| D — hosted service | ✅ live in production | `task/087` + `task/089`, deployed from CI |
 | E — Arc deployment | ⬜ not started | — |
 | Demo video | ⬜ not started | — |
+
+**8 Sep — the contracts are on chain, and `graph_out` makes the composition real.**
+
+New `StableLPManager`, `VolatileLPManager`, `UniLens` and `ChainlinkPriceOracle` implementations are
+deployed on all five chains (release 2.1.0). `moveLiquidity` therefore exists on chain — for managers
+created from this release onward, which is what non-upgradeable clones mean and what the demo has to say
+out loud. The frontend and the local MCP server follow the new addresses, and the sync that does it now
+*accumulates* implementations instead of replacing them: two places recognise a manager by the
+implementation it was cloned from, and filtering by the newly deployed pair alone would have emptied the
+manager list for every existing owner the moment the oracle API was unavailable.
+
+`graph_out` emits `EntityChanges` from the same modules that feed the SQL sink — which is what makes the
+composition claim structural rather than a sentence in a README: two Graph products, one decoder. The
+subgraph model is not the SQL shape. Postgres keeps eleven event tables plus `position_delta` because
+that schema exists in production and its rows are compared against it; the subgraph gets `Manager`,
+`Operator` already folded into "who may act now", `Position` with running liquidity and lifetime fees,
+an immutable `PositionDelta`, and one `ManagerEvent` timeline over all eleven event types.
+
+Verified live on **Unichain** — one of the two chains this package follows, alongside mainnet, while
+Arbitrum stays on the Envelop oracle because a per-block quota and 0.25-second blocks are bad
+arithmetic. Manager `0x9f7e19b7…` at block 54,551,071 comes out as a single entity with its
+`Initialized` fields merged in rather than a create and an update racing inside one block; the first
+allocate at 54,572,737 produces the `Position`, its `PositionDelta` and an `allocated` event. Both runs
+started at the package's own `initialBlock` for that chain, so nothing was spent backfilling stores
+through the hosted endpoint.
+
+One dependency did not survive contact: `substreams-entity-change`, the helper crate for exactly this
+job, pins `substreams` 0.6 while this package is on 0.7 — both versions end up linked, and with
+`lto = true` the build fails outright. The entity types are generated from a local copy of the upstream
+proto instead, while the manifest still imports the official `.spkg` so the descriptor a consumer reads
+stays canonical.
+
+**5 Sep — D is in production.** The hosted service answers on `unisafe.envelop.is` (`/mcp` for agents,
+`/v2` for the app, `/healthz`), deployed by the CI job rather than by hand, reading the index over TLS.
+It is mounted on the existing host under its own paths rather than a subdomain of its own: Cloudflare's
+Universal SSL covers one level of subdomain, so `mcp.unisafe.envelop.is` would have failed the handshake
+at the edge.
+
+**6 Sep — the index was primary for a chain it had no business answering for.** `INSIGHT_SCHEMAS` merged
+over a hardcoded default map, so it could add a network but never remove one: setting it to
+`1:eth,130:uni` left `42161 → arb` in place, and production served Arbitrum history from a one-off
+historical window as `source: "graph"` with an empty degradation trail. It now replaces the map rather
+than merging into it, and the startup line prints the active pairs so acceptance is checked from the log
+instead of by probing a reference manager.
 
 **4 Sep — C written, deliberately not published.** The local server is now the half that holds the key
 and nothing else: `get_position_history`, `list_operators` and `get_portfolio` left for the hosted

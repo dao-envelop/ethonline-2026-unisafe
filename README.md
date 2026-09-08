@@ -127,8 +127,12 @@ anything is signed.
   — the four modules; the registry is built from the factory's deployment event, not an address list
 - [`substreams.yaml`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/substreams.yaml)
   — factory address as the only parameter, per-chain table in that repo's README
-- verified against Arbitrum One and cross-checked with the production oracle — see that repo's README
-- the hosted MCP service reading it live _(pending)_
+- [`schema.graphql`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/schema.graphql)
+  and `graph_out` — the second Graph product, fed by the same modules as the SQL sink, so the composition
+  is one decoder rather than two implementations that can drift
+- verified against Arbitrum One and cross-checked with the production oracle, and `graph_out` verified on
+  Unichain (manager creation at 54,551,071, first allocate at 54,572,737) — see that repo's README
+- the hosted service reads the index live at `unisafe.envelop.is/mcp`, with the fallback cascade below
 
 **Chainlink** — price feeds gating operator swaps:
 - `src/oracle/ChainlinkPriceOracle.sol` and `_guardSwap` in `src/BaseLPManager.sol`
@@ -143,10 +147,10 @@ tables — eleven event types plus `position_delta`, the one that actually model
 
 | | | |
 |---|---|---|
-| A | `moveLiquidity` | ✅ implemented, 254 tests green |
-| B | Substreams package | 🟡 running live |
-| C | Local MCP slimmed + `move` | 🟡 written, unpublished |
-| D | Hosted read/strategy MCP | 🟡 reads + strategy working |
+| A | `moveLiquidity` | ✅ implemented, 254 tests green, **deployed on all five chains 8 Sep** (release 2.1.0) |
+| B | Substreams package | ✅ SQL sink live; `graph_out` + subgraph schema landed (v0.2.0) — Studio deployment pending |
+| C | Local MCP slimmed + `move` | 🟡 written, awaiting merge and release |
+| D | Hosted read/strategy MCP | ✅ live in production behind `unisafe.envelop.is` |
 | E | Arc deployment | ⬜ not started |
 | — | Demo video | ⬜ not started |
 
