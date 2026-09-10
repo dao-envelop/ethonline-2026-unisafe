@@ -1,0 +1,210 @@
+# Submissions — three tracks, what each asks for and what answers it
+
+Written to be pasted. Each section has the track's hard requirements, whether we meet them and with
+what evidence, the text for the form, and the things only a person can do.
+
+Arc is not here. Its mainnet has no public RPC endpoint — the documentation still publishes testnet
+only — and the owner postponed it rather than ship a deployment we could not demonstrate.
+
+---
+
+## 1 · Uniswap — Best Stack Contribution (+ Continuity)
+
+**What it asks**
+
+| Requirement | Status |
+|---|---|
+| Public **GitHub** repository | ✅ [dao-envelop/uni-smart-wallet](https://github.com/dao-envelop/uni-smart-wallet), mirror in step with GitLab |
+| `FEEDBACK.md` | ✅ [in the repo root](https://github.com/dao-envelop/uni-smart-wallet/blob/master/FEEDBACK.md) — seven items, all from this integration |
+| Uniswap Developer Feedback Form linking to it | ⬜ **person** — submit the form with the link |
+| README points at the contracts and lines | ✅ [README](https://github.com/dao-envelop/uni-smart-wallet#readme) names `src/VolatileLPManager.sol`, both tests and `FEEDBACK.md` |
+| Continuity Track registration | ⬜ **person** — Hacker Dashboard, "Extend Open Source" |
+
+**Short description (≤ 280 chars)**
+
+> `moveLiquidity`: one operator call that pulls liquidity from one Uniswap v4 pool and adds it into
+> another inside a single `unlock` — oracle-guarded, one settlement pass. It replaces
+> withdraw-then-allocate: two transactions, two gas charges, and an idle window in between.
+
+**What we built (long)**
+
+> unisafe manages Uniswap v4 liquidity through a manager NFT. The owner may authorise operators — bots,
+> agents — that can rebalance a position and can never withdraw; that boundary is in the contract.
+>
+> The gap we closed is what happens when a different pool becomes the better place to be. That was two
+> transactions: `withdrawTo`, then `allocate`. Two intrinsic gas charges, two oracle checks at two
+> different prices, and between them a window where the capital earns nothing.
+>
+> `moveLiquidity` does it in one. It is possible because v4 keys deltas by `(address, currency)` rather
+> than by pool, and `unlock` checks exactly one thing on exit — that no non-zero delta remains. Nothing
+> in v4 restricts a callback to a single pool; the documentation simply never says so, which is why we
+> proved it with a standalone test against a bare `PoolManager` before touching the manager.
+>
+> Measured from equal fresh state: **337,035 gas** for the move against **381,744 + 21,000** for the
+> two-call path — about 66,000 saved, and the idle window gone. The first version of that benchmark ran
+> both paths in one test and made the move look 37% *more* expensive, because whichever path runs second
+> inherits the other's warm storage; the number above comes from two tests from identical state.
+>
+> The shape of the API was decided by EIP-170, not by taste. The array form — many pulls, many adds —
+> needs its own calldata-to-memory encoder and memory decoder for arrays of structs, and that pair cost
+> 947 bytes against 858 of headroom. So the operation moves one position to one destination, and cutting
+> duplication paid for the rest: `allocate`, `recenter` and `move` now share one `_guardedSwap`, which
+> returned 233 bytes and leaves a single place where those guards can drift.
+>
+> Deployed on Ethereum, Unichain, Base, Arbitrum and Unichain Sepolia on 8 September. Managers are
+> EIP-1167 clones and are never migrated, so the operation reaches managers created from that release
+> onward — we say so in the README and in the video rather than letting it be discovered.
+
+**Where a judge should look**
+
+- `src/VolatileLPManager.sol` — `moveLiquidity`, `_handleMove`, and `_guardedSwap`
+- `test/CrossPoolUnlock.t.sol` — manager-free proof that v4 permits several pools in one `unlock`
+- `test/VolatileLPManagerMove.t.sol` — 17 tests: behaviour, the oracle matrix, "nothing leaves the
+  manager", and the gas benchmark
+- `FEEDBACK.md` — what building this over v4 cost
+
+---
+
+## 2 · The Graph — Composable/Standardized **and** AI Tooling (Continuity)
+
+**What Composable asks**
+
+| Requirement | Status |
+|---|---|
+| Composition of **≥ 2 Graph products** | ✅ our published Substreams package **plus** a published third-party package consumed as a dependency |
+| **Live data** from a Graph provider | ✅ The Graph Market key against StreamingFast endpoints; SQL sink following Ethereum and Unichain heads |
+| More than one query to one subgraph | ✅ eleven decoded event types, a position model, two sinks |
+| Public repo + video 2–4 min | ✅ repo · 🟡 video |
+
+**What AI Tooling asks**
+
+| Requirement | Status |
+|---|---|
+| Graph as a **load-bearing** part | ✅ the index is the first source for both the agent interface and the dApp |
+| Live data only, no mocks | ✅ every number in the demo comes from the running sink or the chain |
+| Reasoning, decisions, automation or an NL interface | ✅ `rank_pools` / `suggest_move` reason over indexed fees and propose a move an agent then executes |
+| Pre-existing work documented | ✅ [README](README.md#what-existed-before-the-hackathon) and [AI_USAGE.md](AI_USAGE.md) |
+
+**Short description (≤ 280 chars)**
+
+> A Substreams package for the class "LP manager over Uniswap v4" — published, importable, and itself
+> composed with a published package whose block index decides which blocks we open. It feeds a SQL
+> index that answers an agent's questions and the dApp's alike.
+
+**What we built (long)**
+
+> The package decodes eleven event types of a *class* of contracts, not of our addresses: the manager
+> registry is built from the factory's own deployment event, so pointing it at any deployment of the
+> same factory on any chain fills the registry by itself. The factory address is the only parameter.
+>
+> Positions cannot be built from the managers' own events — `Allocated` carries a leg count, no manager
+> event carries amounts, and for the volatile product nothing on chain links a position's salt to its
+> pool — so the position model is built from Uniswap's `ModifyLiquidity` logs, where pool, range, signed
+> liquidity delta and salt appear together. A recenter then decomposes for free into a negative row and
+> a positive row under one salt.
+>
+> **The composition.** We import [`ethereum-common`](https://substreams.dev/packages/ethereum-common/v0.3.3)
+> and use its `index_events` module as a block filter, so a block holding none of our signatures is
+> never opened. Measured on mainnet: 58,876 blocks in scope, **1,149 processed**. Billing is per block
+> processed, so this is not an optimisation — it is what makes the backfill affordable at all. Our own
+> package is published in turn, as [`envelop-lp-v4`](https://substreams.dev/packages/envelop-lp-v4), so
+> it can be imported the same way.
+>
+> **What we intended and could not do.** `graph_out` and a subgraph schema are written and verified
+> against a live chain, but Subgraph Studio no longer accepts substreams-powered subgraphs — the build
+> and the IPFS upload succeed and the node refuses the deployment outright. Both files stay in the
+> package, and the README says so rather than leaving a reader to find out at deploy time.
+>
+> **What the index is for.** A hosted MCP server answers an agent's questions from it — position history
+> and realised fees, who may operate a manager, which of its pools pays best over the last complete day,
+> whether moving a position is worth it — and the dApp reads the same service, so the app and the agent
+> cannot disagree. Every answer names the source that served it and how current that source is.
+>
+> That last part was earned rather than designed in. On 10 September the sink stopped: a provider's
+> authentication service began refusing every stream. The service kept answering from an index an hour
+> behind, and the failure surfaced when the owner noticed that a fee claim he had just made was missing.
+> The cascade now declines an index further behind head than its budget, says so in the answer, and a
+> watchdog restarts a stalled sink and escalates only when restarting does not help.
+
+**Where a judge should look**
+
+- [`src/lib.rs`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/src/lib.rs) —
+  the modules; the registry is built from the factory's event
+- [`substreams.yaml`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/substreams.yaml) —
+  the `ethereum-common` import and the block filter, with the numbers in the comment
+- [`insight/sources/`](https://gitlab.com/envelop/protocol-v2/stablelp-ui/-/tree/master/insight/sources) —
+  the cascade: index, oracle, log scan, and the staleness rule
+- `https://unisafe.envelop.is/mcp` — the running server; `/healthz` shows per-chain index lag
+
+---
+
+## 3 · Chainlink — Powered Upgrade (Continuity)
+
+**What it asks**
+
+| Requirement | Status |
+|---|---|
+| Improve an existing project using **Price Feeds** | ✅ the operator guard was extended from swaps to liquidity adds |
+| **On-chain state change** (mandatory) | ✅ a new `ChainlinkPriceOracle` deployed on five chains on 8 Sep and seeded with feeds; managers point at it via `setPriceOracle` |
+| Continuity registration | ⬜ **person** |
+
+**Short description (≤ 280 chars)**
+
+> An audit found that an operator could deploy principal at a distorted spot price without swapping at
+> all. The fix runs every operator action past a Chainlink feed — not just swaps — and bounds where an
+> operator may park a range relative to the reference.
+
+**What we built (long)**
+
+> unisafe already used Chainlink Price Feeds to vouch for the *execution price* of a swap an operator
+> triggered. An audit on 4 September found the hole that leaves: an operator could add liquidity without
+> swapping, at whatever the pool's spot price happened to be, and place principal at a distorted price —
+> measured at −22.4% and −44.5% of a portfolio in a single call.
+>
+> Three changes, all deployed:
+>
+> 1. **Every operator action is checked, not only swaps.** `ChainlinkPriceOracle` gained a spot branch:
+>    `check` with `amountIn == 0` compares the pool's `slot0` against the Chainlink reference in both
+>    directions, within its own tolerance. `allocate`, `allocateFrom`, `reinvest`, `recenter` and
+>    `moveLiquidity` all pass through it, and fail closed when no feed is configured.
+> 2. **Where an operator may park liquidity is bounded by the reference.** A range's midpoint must sit
+>    within θ of the Chainlink price. The loss from a parked range *is* its distance from fair value, so
+>    that distance is the accepted cost per operation — and no pool is closed by it: a narrow range at a
+>    fair price is legal at any tick spacing.
+> 3. **One operator action per transaction**, so a batch cannot walk the pool between checks.
+>
+> The on-chain state change is a deployment, not a demo: new oracle contracts on Ethereum, Unichain,
+> Base, Arbitrum and Unichain Sepolia, seeded with feeds for every currency each chain has one for, and
+> managers re-pointed at them by their owners.
+>
+> The frontend was taught the same vocabulary, because a guard nobody can see is a guard that surprises
+> people: the manager screen shows all three tolerances, an operator's default range is centred on the
+> Chainlink reference rather than on the pool, the balancing swap is capped so an operation cannot trip
+> its own spot check, and each refusal has copy that says which bound was crossed and what to do.
+
+**Where a judge should look**
+
+- `src/oracle/ChainlinkPriceOracle.sol` — the feed registry, the swap branch and the new spot branch
+- `src/BaseLPManager.sol` — `_guardSwap` / the add-side guard, and `MAX_OPS_PER_TX`
+- `script/SetOracleFeeds.s.sol` — what was written on chain
+- `stablelp-ui`: `src/components/manager/OracleSection.tsx`, `src/lib/oracleReference.ts`
+
+---
+
+## What only a person can do
+
+1. **Uniswap Developer Feedback Form** — submit with a link to `FEEDBACK.md`. Required for that track.
+2. **Continuity Track registration** on the Hacker Dashboard, kind "Extend Open Source", for all three.
+3. **The demo video, 2–4 min** — script and shot list in [demo/SCRIPT.md](demo/SCRIPT.md). Preconditions
+   are met except funding the demo manager enough that the numbers read on screen.
+4. **Submit** on ETHGlobal before **13 September, 12:00 EDT (19:00 MSK)** — one project, three tracks.
+
+## Facts worth keeping straight in every form
+
+- Managers are non-upgradeable clones: `moveLiquidity` reaches managers created from the 8 September
+  release onward, not the ones already live.
+- The index follows Ethereum and Unichain. Arbitrum stays on Envelop's own indexer, because per-block
+  billing and quarter-second blocks are bad arithmetic.
+- Ranking is fee APR over the last complete day. It is not a forecast, and impermanent loss is not in it.
+- Roughly 24k lines of audited contracts predate the event. What was built during it is listed in the
+  [README](README.md#what-we-are-building-during-the-event); everything else is stated as prior work.

@@ -237,6 +237,7 @@ _Video and transaction hashes go here._
 
 ## Links
 
+- Track submissions, requirement by requirement — [SUBMISSIONS.md](SUBMISSIONS.md)
 - Live app — https://unisafe.envelop.is
 - Plan and progress log — [PLAN.md](PLAN.md)
 - Contracts — https://github.com/dao-envelop/uni-smart-wallet
