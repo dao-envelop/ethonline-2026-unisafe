@@ -15,7 +15,7 @@ only — and the owner postponed it rather than ship a deployment we could not d
 | Requirement | Status |
 |---|---|
 | Public **GitHub** repository | ✅ [dao-envelop/uni-smart-wallet](https://github.com/dao-envelop/uni-smart-wallet), mirror in step with GitLab |
-| `FEEDBACK.md` | ✅ [in the repo root](https://github.com/dao-envelop/uni-smart-wallet/blob/master/FEEDBACK.md) — seven items, all from this integration |
+| `FEEDBACK.md` | ✅ [in the repo root](https://github.com/dao-envelop/uni-smart-wallet/blob/master/FEEDBACK.md) — seven items, all from this integration; [copy here](FEEDBACK.md) |
 | Uniswap Developer Feedback Form linking to it | ⬜ **person** — submit the form with the link |
 | README points at the contracts and lines | ✅ [README](https://github.com/dao-envelop/uni-smart-wallet#readme) names `src/VolatileLPManager.sol`, both tests and `FEEDBACK.md` |
 | Continuity Track registration | ⬜ **person** — Hacker Dashboard, "Extend Open Source" |
@@ -47,7 +47,7 @@ only — and the owner postponed it rather than ship a deployment we could not d
 >
 > The shape of the API was decided by EIP-170, not by taste. The array form — many pulls, many adds —
 > needs its own calldata-to-memory encoder and memory decoder for arrays of structs, and that pair cost
-> 947 bytes against 858 of headroom. So the operation moves one position to one destination, and cutting
+> 947 bytes against the 858 we had before the operation. So the operation moves one position to one destination, and cutting
 > duplication paid for the rest: `allocate`, `recenter` and `move` now share one `_guardedSwap`, which
 > returned 233 bytes and leaves a single place where those guards can drift.
 >
@@ -61,7 +61,7 @@ only — and the owner postponed it rather than ship a deployment we could not d
 - `test/CrossPoolUnlock.t.sol` — manager-free proof that v4 permits several pools in one `unlock`
 - `test/VolatileLPManagerMove.t.sol` — 17 tests: behaviour, the oracle matrix, "nothing leaves the
   manager", and the gas benchmark
-- `FEEDBACK.md` — what building this over v4 cost
+- `FEEDBACK.md` — what building this over v4 cost ([copy in this repo](FEEDBACK.md))
 
 ---
 

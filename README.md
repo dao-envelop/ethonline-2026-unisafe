@@ -164,6 +164,7 @@ anything is signed.
 - [`test/VolatileLPManagerMove.t.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/test/VolatileLPManagerMove.t.sol)
   — 17 tests: behaviour, the oracle matrix, the "nothing leaves the manager" check, and the gas benchmark
 - [`FEEDBACK.md`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/FEEDBACK.md) — the seven things that cost us time building over v4
+  ([same file in this repo](FEEDBACK.md), if you would rather not leave the hub)
 
 **The Graph** — the package and what consumes it:
 - [`proto/envelop/lp/v1/lp.proto`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/proto/envelop/lp/v1/lp.proto)
