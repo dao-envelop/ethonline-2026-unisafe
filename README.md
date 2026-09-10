@@ -172,9 +172,16 @@ anything is signed.
   — the four modules; the registry is built from the factory's deployment event, not an address list
 - [`substreams.yaml`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/substreams.yaml)
   — factory address as the only parameter, per-chain table in that repo's README
+- the package is **published to the registry**: [`envelop-lp-v4`](https://substreams.dev/packages/envelop-lp-v4),
+  so anyone can import it the way we import someone else's
+- **composition with a published package**: `substreams.yaml` imports
+  [`ethereum-common`](https://substreams.dev/packages/ethereum-common/v0.3.3) and uses its `index_events`
+  as a block filter, so a block holding none of our eleven signatures is never opened. Measured on
+  mainnet: 58,876 blocks in scope, 1,149 processed
 - [`schema.graphql`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/schema.graphql)
-  and `graph_out` — the second Graph product, fed by the same modules as the SQL sink, so the composition
-  is one decoder rather than two implementations that can drift
+  and `graph_out` — written and verified on Unichain, but **Subgraph Studio no longer accepts
+  substreams-powered subgraphs** (its words: "no longer supported"), which is why the second Graph
+  product here is the published package and the composition rather than a hosted subgraph
 - verified against Arbitrum One and cross-checked with the production oracle, and `graph_out` verified on
   Unichain (manager creation at 54,551,071, first allocate at 54,572,737) — see that repo's README
 - the hosted service reads the index live at `unisafe.envelop.is/mcp`, with the fallback cascade below
@@ -197,12 +204,14 @@ tables — eleven event types plus `position_delta`, the one that actually model
 
 | | | |
 |---|---|---|
-| A | `moveLiquidity` | ✅ implemented, 254 tests green, **deployed on all five chains 8 Sep** (release 2.1.0) |
-| B | Substreams package | ✅ `graph_out` + subgraph schema landed (v0.2.1); sink and Studio deployment pending |
-| C | Local MCP slimmed + `move` | ✅ merged and published — `@envelop/mcp-lp` 1.0.0 |
-| D | Hosted read/strategy MCP | ✅ live in production behind `unisafe.envelop.is` |
-| E | Arc deployment | ⬜ not started |
-| — | Demo video | ⬜ not started |
+| A | `moveLiquidity` | ✅ implemented, deployed on all five chains 8 Sep (release 2.1.0), and in the dApp — an owner can move a position between pools, not only an agent |
+| B | Substreams package | ✅ published on [substreams.dev](https://substreams.dev/packages/envelop-lp-v4); SQL sink live on Ethereum and Unichain; composed with a published third-party package. Subgraph Studio no longer accepts substreams-powered subgraphs — see below |
+| C | Local MCP slimmed + `move` | ✅ published — `@envelop/mcp-lp` 1.0.0 |
+| D | Hosted read/strategy MCP | ✅ live at `unisafe.envelop.is/mcp`, and the dApp reads it first: index → oracle → chain, with the source named on screen |
+| E | Arc deployment | ⬜ out of this submission — Arc mainnet has no public RPC and the owner postponed it |
+| — | Demo video | 🟡 script and shot list written; one precondition left |
+
+Submitting to three tracks: **Uniswap**, **The Graph** and **Chainlink**. Arc is not among them.
 
 Event runs 4–13 September 2026. The full plan, the reasoning behind each decision and a dated progress
 log are in **[PLAN.md](PLAN.md)** — published before the work, and corrected in place when reality
