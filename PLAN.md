@@ -188,12 +188,43 @@ Updated as work lands. Each entry links the commits that produced it.
 
 | Workstream | Status | Landed |
 |---|---|---|
-| A — `moveLiquidity` | ✅ implemented and deployed | `5a77c41` → `cc7d732`, in `master`; deploy `520f542` (8 Sep) |
-| B — Substreams package | ✅ `graph_out` landed | `1803105` → `ef30502`, release `v0.2.1` |
-| C — local MCP slimmed | ✅ merged and published | `84bc0bb` → `a25ebd3`, tag `mcp-v1.0.0` |
-| D — hosted service | ✅ live in production | `task/087` + `task/089`, deployed from CI |
-| E — Arc deployment | ⬜ not started | — |
-| Demo video | ⬜ not started | — |
+| A — `moveLiquidity` | ✅ deployed, and in the dApp | `5a77c41` → `cc7d732`; deploy `520f542`; UI in `task_095` |
+| B — Substreams package | ✅ published, sink live, composed | `1803105` → `3099142`, releases to `v0.2.4`, registry `envelop-lp-v4` |
+| C — local MCP slimmed | ✅ published | `84bc0bb` → `a25ebd3`, tag `mcp-v1.0.0` |
+| D — hosted service | ✅ live, and the app reads it | `task/087`, `089`, `090`, `094`, `100`, `101` |
+| E — Arc deployment | ⬜ postponed by the owner | no public mainnet RPC |
+| Demo video | 🟡 script written | one precondition left |
+
+**9–10 Sep — the app reads what the agent reads, and a broken day proved the design.**
+
+Four things landed on the product side. The dApp's history now goes through the hosted service — index
+first, the Envelop oracle behind it, a browser scan last — and the position card says which source
+answered and how current it is; until then the app read the oracle directly and presented every answer
+as equally fresh. `moveLiquidity` gained a UI, so the owner can do what an agent already could. The
+operators tab stopped folding `OperatorSet` logs from the factory block — 17.5M of them on Arbitrum,
+which is why a manager whose operator had been set an hour earlier listed none — and reads
+`UniLens.operators` instead. And the landing page finally says where an agent starts, with a page of its
+own at [/agents](https://unisafe.envelop.is/agents) carrying the endpoint, the skill and the local
+server in the order of what each asks of a person.
+
+Then the index stopped, and that is worth recording because it exercised the whole design at once. The
+provider's authentication service began refusing every stream and the sink retried for an hour without
+one succeeding. What made it visible was not monitoring — it was the owner noticing that a `claimFees`
+he had just sent was missing from the history. The service had answered from an index an hour behind
+without saying so, because the cascade had no staleness rule: it fell back on emptiness and on unknown
+managers, never on age.
+
+Three fixes came out of it, in the order they matter. The index now declines when it is further behind
+head than its budget — ten minutes of chain time by default — and the reason, with both block numbers,
+reaches the caller: a stale answer to "what has this position done" is indistinguishable from "nothing
+happened", which is the worst shape a wrong answer can take. `/healthz` reports per-chain lag, so the
+condition is visible from outside the process. And a watchdog restarts a stalled sink on its own,
+escalating to a human only when restarting does not help.
+
+The endpoint was swapped for another provider's; the cursor proved portable, so the sink resumed at the
+block it had stopped on and the missing fees appeared. The watchdog's own acceptance run then found two
+defects in it before anyone could rely on it — a test that shared state with the thing it tested, and a
+rule that watched the index's freshness but never whether the process was alive.
 
 **8 Sep — 1.0.0 is out, and the release gate failed for a reason worth keeping.**
 
