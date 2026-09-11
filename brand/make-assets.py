@@ -32,37 +32,19 @@ def w(text, key, size):
 BG, S1, TX, TX2, TX3 = "#0A0C10", "#101319", "#EAEEF4", "#9AA4B2", "#626C7A"
 MINT, MINT2, ACC = "#4AFEBF", "#51EEDA", "#34E3AC"
 
-# The Envelop mark, lifted verbatim from stablelp-ui/src/app/icon.svg (viewBox 0 0 120 120) so the
-# submission artwork and the app's own favicon are the same drawing, not a redraw.
-ICON = pathlib.Path("/home/devops/codex-work/ev2/stablelp-ui/src/app/icon.svg").read_text()
-inner = ICON.split(">", 1)[1].rsplit("</svg>", 1)[0].strip()
-
-def mark(x, y, px, suffix):
-    """The mark placed at (x, y) at px × px. Gradient ids are suffixed so two copies can coexist."""
-    body = re.sub(r'(paint\d_linear_1718_3882)', r'\1_' + suffix, inner)
-    return f'<g transform="translate({x},{y}) scale({px/120:.6f})">{body}</g>'
+# The unisafe mark lives in mark.py — Envelop's ring kept verbatim, its rhombus subtracted down to a
+# sealed V. Header copies use the simplified build: at 54 px the arc's break is under two pixels.
+from mark import mark
 
 def text(s, x, y, key, size, fill, anchor="start", extra=""):
     return (f'<text x="{x}" y="{y}" font-family="{FAMILY[key]}" font-size="{size}" '
             f'fill="{fill}" text-anchor="{anchor}"{extra}>{s}</text>')
 
 # ---------------------------------------------------------------- logo, 512 × 512
-L = 512
-logo = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{L}" height="{L}" viewBox="0 0 {L} {L}">']
-logo.append(f'''<defs>
-<radialGradient id="glow" cx="0.5" cy="0.32" r="0.72">
-  <stop offset="0" stop-color="{MINT}" stop-opacity="0.22"/>
-  <stop offset="1" stop-color="{MINT}" stop-opacity="0"/>
-</radialGradient>
-</defs>''')
-logo.append(f'<rect width="{L}" height="{L}" rx="112" fill="{BG}"/>')
-logo.append(f'<rect width="{L}" height="{L}" rx="112" fill="url(#glow)"/>')
-logo.append(f'<rect x="1.5" y="1.5" width="{L-3}" height="{L-3}" rx="110.5" fill="none" '
-            f'stroke="{ACC}" stroke-opacity="0.28" stroke-width="3"/>')
-MK = 300
-logo.append(mark((L - MK) / 2, (L - MK) / 2 - 6, MK, "a"))
-logo.append("</svg>")
-pathlib.Path(f"{pathlib.Path(__file__).parent}/logo-512.svg").write_text("\n".join(logo))
+import mark as _m
+out = pathlib.Path(__file__).parent
+(out / "logo-512.svg").write_text(_m.tile(512, "a"))
+(out / "logo-small.svg").write_text(_m.tile(512, "s", simplified=True))
 
 # ---------------------------------------------------------------- cover, 1280 × 720 (16:9)
 W, H, M = 1280, 720, 72
@@ -86,8 +68,8 @@ c.append(f'<ellipse cx="1010" cy="150" rx="620" ry="480" fill="url(#g1)"/>')
 c.append(f'<ellipse cx="90" cy="700" rx="520" ry="380" fill="url(#g2)"/>')
 
 # header
-c.append(mark(M, 66, 54, "b"))
-c.append(text("unisafe", M + 54 + 18, 110, "sgb", 40, TX))
+c.append(mark(M, 64, 58, "b", simplified=True))
+c.append(text("unisafe", M + 58 + 18, 110, "sgb", 40, TX))
 c.append(text("ETHOnline 2026", W - M, 104, "jbm", 20, TX3, anchor="end"))
 c.append(f'<rect x="{M}" y="150" width="{W-2*M}" height="1" fill="#FFFFFF" fill-opacity="0.08"/>')
 
@@ -133,7 +115,7 @@ facts = "337,035 gas   ·   one settlement pass   ·   one oracle check"
 c.append(text(facts, M, 648, "jbm", 19, TX2))
 c.append(text("unisafe.envelop.is", W - M, 648, "jbm", 19, ACC, anchor="end"))
 c.append("</svg>")
-pathlib.Path(f"{pathlib.Path(__file__).parent}/cover-1280x720.svg").write_text("\n".join(c))
+pathlib.Path(f"{out}/cover-1280x720.svg").write_text("\n".join(c))
 
 print(json.dumps({
     "headline_widths": [round(w(t, "sgb", HS)) for t in ["Move liquidity between", "Uniswap v4 pools", "in one transaction."]],
