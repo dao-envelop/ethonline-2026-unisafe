@@ -54,9 +54,12 @@ closed when the oracle declines.
 index, so a five-chain deploy script ends up carrying a hand-maintained JSON transcribed from the docs
 site ([`script/oracle_feeds.json`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/script/oracle_feeds.json)) — a JSON endpoint keyed by chain id
 and symbol would remove that whole class of transcription error. And the **L2 sequencer uptime feed** —
-the thing that makes an L2 integration fail closed correctly, and which some chains (Unichain) do not
-have at all — is documented away from the Price Feeds quickstart, so it is easy to ship an L2
-integration without ever learning it exists.
+the thing that makes an L2 integration fail closed correctly — is documented away from the Price Feeds
+quickstart, so it is easy to ship an L2 integration without learning it exists; worse, a chain that had
+no uptime feed at deploy time can get one later and nothing tells you. Ours deployed on Unichain with
+the gate off because there was no feed, and one has since been published
+(`0x495639D9914e7D270c5dCC641BfB1d807423F813`) — we found it by re-reading the directory, not by being
+told.
 
 ## The Graph
 
