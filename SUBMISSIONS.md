@@ -191,6 +191,12 @@ only — and the owner postponed it rather than ship a deployment we could not d
 
 ---
 
+## Artwork
+
+Both images the submission form asks for are in [`brand/`](brand/): `logo-512.png` (square) and
+`cover-1280x720.png` (16:9, with `cover-640x360.png` as the small variant). Same mark, palette and type
+as the product itself.
+
 ## What only a person can do
 
 1. **Uniswap Developer Feedback Form** — submit with a link to `FEEDBACK.md`. Required for that track.
