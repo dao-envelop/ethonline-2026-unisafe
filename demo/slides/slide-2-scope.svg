@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<radialGradient id="s1" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0" stop-color="#4AFEBF" stop-opacity="0.13"/><stop offset="1" stop-color="#4AFEBF" stop-opacity="0"/></radialGradient>
+<radialGradient id="s2" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0" stop-color="#51EEDA" stop-opacity="0.06"/><stop offset="1" stop-color="#51EEDA" stop-opacity="0"/></radialGradient>
+<marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0,1.2 L9,5 L0,8.8 z" fill="#34E3AC"/></marker>
+</defs>
+<rect width="1920" height="1080" fill="#0A0C10"/>
+<ellipse cx="1520" cy="180" rx="820" ry="620" fill="url(#s1)"/>
+<ellipse cx="180" cy="1020" rx="700" ry="520" fill="url(#s2)"/>
+<defs><linearGradient id="mgh" x1="0" y1="54" x2="0" y2="458" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4AFEBF"/><stop offset="1" stop-color="#51EEDA"/></linearGradient></defs><g transform="translate(100,74) scale(0.109375)"><g fill="none" stroke="url(#mgh)" stroke-width="28.8" stroke-linecap="round"><path d="M 256 67.4 A 188.6 188.6 0 0 0 256 444.6"/><path d="M 384.6 118.1 A 188.6 188.6 0 0 1 384.6 393.9"/></g><circle cx="326.4" cy="430.2" r="15.5" fill="url(#mgh)"/><g transform="translate(0,-12)"><path d="M 138 196 A 174.3 174.3 0 0 1 374 196" fill="none" stroke="#34E3AC" stroke-width="34" stroke-linecap="round"/><path d="M 142 256 L 256 390.2 L 370 256" fill="none" stroke="url(#mgh)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/><circle cx="256" cy="300" r="36" fill="url(#mgh)"/></g></g>
+<text x="172" y="118" font-family="SG Bold" font-size="38" fill="#EAEEF4" text-anchor="start">unisafe</text>
+<text x="1820" y="114" font-family="JBM Medium" font-size="22" fill="#626C7A" text-anchor="end">SCOPE</text>
+<rect x="100" y="156" width="1720" height="1" fill="#FFFFFF" fill-opacity="0.09"/>
+<text x="100" y="268" font-family="SG Bold" font-size="58" fill="#EAEEF4" text-anchor="start">What existed, and what we built in nine days.</text>
+<text x="100" y="320" font-family="HG Regular" font-size="27" fill="#9AA4B2" text-anchor="start">The left column is prior work and is not what we are asking to be judged.</text>
+<text x="100" y="372" font-family="JBM Medium" font-size="22" fill="#626C7A" text-anchor="start">BEFORE  ·  4 September</text>
+<text x="1020" y="372" font-family="JBM Medium" font-size="22" fill="#4AFEBF" text-anchor="start">BUILT DURING THE EVENT</text>
+<rect x="100" y="390" width="780" height="1" fill="#FFFFFF" fill-opacity="0.09"/>
+<rect x="1020" y="390" width="792" height="2" fill="#34E3AC" fill-opacity="0.5"/>
+<circle cx="106" cy="431" r="4" fill="#626C7A"/>
+<text x="126" y="438" font-family="HG Regular" font-size="22" fill="#9AA4B2" text-anchor="start">NFT-owned managers over Uniswap v4 — live and non-upgradeable on five</text>
+<text x="126" y="467" font-family="HG Regular" font-size="22" fill="#9AA4B2" text-anchor="start">chains, ~24k audited lines</text>
+<circle cx="106" cy="513" r="4" fill="#626C7A"/>
+<text x="126" y="520" font-family="HG Regular" font-size="22" fill="#9AA4B2" text-anchor="start">The operator model: rebalance yes, withdraw never — enforced by the</text>
+<text x="126" y="549" font-family="HG Regular" font-size="22" fill="#9AA4B2" text-anchor="start">contract, not by trust</text>
+<circle cx="106" cy="595" r="4" fill="#626C7A"/>
+<text x="126" y="602" font-family="HG Regular" font-size="22" fill="#9AA4B2" text-anchor="start">recenter — remove, swap and re-add inside one pool</text>
+<circle cx="106" cy="648" r="4" fill="#626C7A"/>
+<text x="126" y="655" font-family="HG Regular" font-size="22" fill="#9AA4B2" text-anchor="start">The dApp, and a local MCP server giving an agent the operator role,</text>
+<text x="126" y="684" font-family="HG Regular" font-size="22" fill="#9AA4B2" text-anchor="start">running since July</text>
+<circle cx="106" cy="730" r="4" fill="#626C7A"/>
+<text x="126" y="737" font-family="HG Regular" font-size="22" fill="#9AA4B2" text-anchor="start">An event indexer over five chains, serving position history to the frontend</text>
+<rect x="1020" y="417" width="89.2" height="27" rx="13.5" fill="#4AFEBF" fill-opacity="0.10" stroke="#34E3AC" stroke-opacity="0.38" stroke-width="1.2"/>
+<text x="1031" y="436" font-family="JBM Medium" font-size="16" fill="#4AFEBF" text-anchor="start">Uniswap</text>
+<text x="1152" y="438" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">moveLiquidity — a cross-pool move in one unlock. 337,035 gas,</text>
+<text x="1152" y="467" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">one settlement pass, no idle window.</text>
+<rect x="1020" y="499" width="108.4" height="27" rx="13.5" fill="#4AFEBF" fill-opacity="0.10" stroke="#34E3AC" stroke-opacity="0.38" stroke-width="1.2"/>
+<text x="1031" y="518" font-family="JBM Medium" font-size="16" fill="#4AFEBF" text-anchor="start">Chainlink</text>
+<text x="1152" y="520" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">The operator guard extended from swap prices to every action,</text>
+<text x="1152" y="549" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">plus a bound on where a range may sit. New oracle deployed and</text>
+<text x="1152" y="578" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">seeded on five chains.</text>
+<rect x="1020" y="610" width="108.4" height="27" rx="13.5" fill="#4AFEBF" fill-opacity="0.10" stroke="#34E3AC" stroke-opacity="0.38" stroke-width="1.2"/>
+<text x="1031" y="629" font-family="JBM Medium" font-size="16" fill="#4AFEBF" text-anchor="start">The Graph</text>
+<text x="1152" y="631" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">A Substreams package, published and composed with a third-party</text>
+<text x="1152" y="660" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">block index, feeding a SQL index on Ethereum and Unichain.</text>
+<rect x="1020" y="692" width="108.4" height="27" rx="13.5" fill="#4AFEBF" fill-opacity="0.10" stroke="#34E3AC" stroke-opacity="0.38" stroke-width="1.2"/>
+<text x="1031" y="711" font-family="JBM Medium" font-size="16" fill="#4AFEBF" text-anchor="start">The Graph</text>
+<text x="1152" y="713" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">A hosted read/strategy MCP server: history, pool ranking,</text>
+<text x="1152" y="742" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">suggest_move — every answer naming its source and how far</text>
+<text x="1152" y="771" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">behind it is.</text>
+<circle cx="1030" cy="816" r="4" fill="#34E3AC"/>
+<text x="1152" y="824" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">In the dApp: move between pools, operators read from the</text>
+<text x="1152" y="853" font-family="HG Regular" font-size="22" fill="#EAEEF4" text-anchor="start">contract, the oracle card, and an entry point built for agents.</text>
+<rect x="100" y="960" width="1720" height="1" fill="#FFFFFF" fill-opacity="0.09"/>
+<text x="100" y="1012" font-family="HG SemiBold" font-size="25" fill="#9AA4B2" text-anchor="start">Submitted under Continuity — Extend Open Source</text>
+<text x="1820" y="1012" font-family="JBM Medium" font-size="20" fill="#626C7A" text-anchor="end">github.com/dao-envelop/ethonline-2026-unisafe</text></svg>

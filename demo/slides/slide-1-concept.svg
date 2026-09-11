@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<radialGradient id="s1" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0" stop-color="#4AFEBF" stop-opacity="0.13"/><stop offset="1" stop-color="#4AFEBF" stop-opacity="0"/></radialGradient>
+<radialGradient id="s2" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0" stop-color="#51EEDA" stop-opacity="0.06"/><stop offset="1" stop-color="#51EEDA" stop-opacity="0"/></radialGradient>
+<marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0,1.2 L9,5 L0,8.8 z" fill="#34E3AC"/></marker>
+</defs>
+<rect width="1920" height="1080" fill="#0A0C10"/>
+<ellipse cx="1520" cy="180" rx="820" ry="620" fill="url(#s1)"/>
+<ellipse cx="180" cy="1020" rx="700" ry="520" fill="url(#s2)"/>
+<defs><linearGradient id="mgh" x1="0" y1="54" x2="0" y2="458" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4AFEBF"/><stop offset="1" stop-color="#51EEDA"/></linearGradient></defs><g transform="translate(100,74) scale(0.109375)"><g fill="none" stroke="url(#mgh)" stroke-width="28.8" stroke-linecap="round"><path d="M 256 67.4 A 188.6 188.6 0 0 0 256 444.6"/><path d="M 384.6 118.1 A 188.6 188.6 0 0 1 384.6 393.9"/></g><circle cx="326.4" cy="430.2" r="15.5" fill="url(#mgh)"/><g transform="translate(0,-12)"><path d="M 138 196 A 174.3 174.3 0 0 1 374 196" fill="none" stroke="#34E3AC" stroke-width="34" stroke-linecap="round"/><path d="M 142 256 L 256 390.2 L 370 256" fill="none" stroke="url(#mgh)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/><circle cx="256" cy="300" r="36" fill="url(#mgh)"/></g></g>
+<text x="172" y="118" font-family="SG Bold" font-size="38" fill="#EAEEF4" text-anchor="start">unisafe</text>
+<text x="1820" y="114" font-family="JBM Medium" font-size="22" fill="#626C7A" text-anchor="end">THE CONCEPT</text>
+<rect x="100" y="156" width="1720" height="1" fill="#FFFFFF" fill-opacity="0.09"/>
+<text x="100" y="268" font-family="SG Bold" font-size="58" fill="#EAEEF4" text-anchor="start">An agent may move the money. It can never take it.</text>
+<text x="100" y="320" font-family="HG Regular" font-size="27" fill="#9AA4B2" text-anchor="start">One vault, any Uniswap v4 pool, and a boundary the contract enforces instead of trusting anyone.</text>
+<rect x="100" y="520" width="300" height="168" rx="20" fill="#101319" stroke="#34E3AC" stroke-opacity="0.22" stroke-width="1.5"/>
+<text x="250.0" y="582" font-family="SG Bold" font-size="31" fill="#EAEEF4" text-anchor="middle">The Graph</text>
+<text x="250.0" y="624" font-family="HG Regular" font-size="21" fill="#9AA4B2" text-anchor="middle">index of every position,</text>
+<text x="250.0" y="653" font-family="HG Regular" font-size="21" fill="#9AA4B2" text-anchor="middle">fee and move</text>
+<rect x="520" y="520" width="300" height="168" rx="20" fill="#101319" stroke="#34E3AC" stroke-opacity="0.22" stroke-width="1.5"/>
+<text x="670.0" y="582" font-family="SG Bold" font-size="31" fill="#EAEEF4" text-anchor="middle">Agent</text>
+<text x="670.0" y="624" font-family="HG Regular" font-size="21" fill="#9AA4B2" text-anchor="middle">reads, ranks,</text>
+<text x="670.0" y="653" font-family="HG Regular" font-size="21" fill="#9AA4B2" text-anchor="middle">proposes</text>
+<rect x="940" y="520" width="400" height="168" rx="20" fill="#101319" stroke="#34E3AC" stroke-opacity="0.55" stroke-width="2.5"/>
+<text x="1140.0" y="582" font-family="SG Bold" font-size="31" fill="#4AFEBF" text-anchor="middle">Manager NFT vault</text>
+<text x="1140.0" y="624" font-family="HG Regular" font-size="21" fill="#9AA4B2" text-anchor="middle">holds the capital,</text>
+<text x="1140.0" y="653" font-family="HG Regular" font-size="21" fill="#9AA4B2" text-anchor="middle">owns the positions</text>
+<rect x="1460" y="520" width="360" height="168" rx="20" fill="#101319" stroke="#34E3AC" stroke-opacity="0.22" stroke-width="1.5"/>
+<text x="1640.0" y="582" font-family="SG Bold" font-size="31" fill="#EAEEF4" text-anchor="middle">Uniswap v4</text>
+<text x="1640.0" y="624" font-family="HG Regular" font-size="21" fill="#9AA4B2" text-anchor="middle">the pools the</text>
+<text x="1640.0" y="653" font-family="HG Regular" font-size="21" fill="#9AA4B2" text-anchor="middle">liquidity sits in</text>
+<path d="M412 604.0 L506 604.0" stroke="#34E3AC" stroke-width="3" stroke-linecap="round" marker-end="url(#ah)"/>
+<text x="460.0" y="502" font-family="JBM Medium" font-size="18" fill="#626C7A" text-anchor="middle">ranked facts</text>
+<path d="M832 604.0 L926 604.0" stroke="#34E3AC" stroke-width="3" stroke-linecap="round" marker-end="url(#ah)"/>
+<text x="880.0" y="502" font-family="JBM Medium" font-size="18" fill="#626C7A" text-anchor="middle">operator call</text>
+<path d="M1352 604.0 L1446 604.0" stroke="#34E3AC" stroke-width="3" stroke-linecap="round" marker-end="url(#ah)"/>
+<text x="1400.0" y="502" font-family="JBM Medium" font-size="18" fill="#626C7A" text-anchor="middle">one unlock</text>
+<path d="M1140 450 L1140 508" stroke="#34E3AC" stroke-opacity="0.5" stroke-width="2.5" stroke-dasharray="6 6" stroke-linecap="round"/>
+<text x="1140" y="434" font-family="HG SemiBold" font-size="23" fill="#EAEEF4" text-anchor="middle">Owner holds the NFT — the only path to withdraw</text>
+<path d="M880 618.0 L880 784" stroke="#34E3AC" stroke-opacity="0.5" stroke-width="2.5" stroke-dasharray="6 6" stroke-linecap="round"/>
+<circle cx="880" cy="604.0" r="13" fill="#0A0C10" stroke="#34E3AC" stroke-width="3"/>
+<text x="880" y="818" font-family="HG Regular" font-size="23" fill="#9AA4B2" text-anchor="middle">Chainlink checks every operator action — the swap price, the pool's own</text>
+<text x="880" y="849" font-family="HG Regular" font-size="23" fill="#9AA4B2" text-anchor="middle">price, and where a range may sit</text>
+<rect x="100" y="928" width="1720" height="1" fill="#FFFFFF" fill-opacity="0.09"/>
+<text x="100" y="984" font-family="SG Bold" font-size="30" fill="#4AFEBF" text-anchor="start">The agent proposes. The contract decides. The owner keeps the key.</text>
+<text x="1820" y="984" font-family="JBM Medium" font-size="22" fill="#626C7A" text-anchor="end">unisafe.envelop.is</text></svg>

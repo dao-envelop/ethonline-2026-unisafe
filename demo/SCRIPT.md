@@ -127,3 +127,10 @@ Repositories, file-and-line pointers per track, `FEEDBACK.md`.
 - Reading numbers the agent already said aloud.
 - Claiming "AI decides" where the contract decides. The interesting part is the opposite: what the agent
   is *not* allowed to do, and who enforces it.
+
+## End cards
+
+Two slides to cut in after the last shot, in [`slides/`](slides/): the concept in one picture, then
+what existed versus what was built during the event with the sponsor technology tagged on each line.
+1920 × 1080, hold each 6–8 seconds. They close the video on the claim the demo just showed rather than
+on a screen recording fading out.
