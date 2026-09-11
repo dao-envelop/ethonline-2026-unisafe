@@ -11,17 +11,22 @@ already reading it; the voice should say the thing the slide does not.
 
 ## Slide 1 — the concept
 
-**Tight — 18 words**
+**Tight — 19 words**
 
-> An agent reads the index and proposes a move. Chainlink checks it. Only the NFT holder can withdraw.
+> The Graph indexes every position. The agent proposes a move, Chainlink checks it, and only the NFT
+> holder can withdraw.
 
-**Full — 22 words, needs 8 seconds**
+**Full — 23 words, needs 8 seconds**
 
-> An agent reads the index, ranks the pools and proposes a move. Chainlink checks every action. Only the
-> NFT holder can withdraw.
+> The Graph indexes every position. The agent proposes a move between Uniswap pools, Chainlink checks it,
+> and only the NFT holder can withdraw.
 
-Pause after "proposes a move" — that is where the viewer's eye reaches the vault. Land on "withdraw":
-it is the whole claim, and the slide's last line repeats it.
+Name the sponsors in the order the slide reads, left to right — the voice then walks the diagram
+instead of competing with it. The tight version drops Uniswap, not The Graph: the pools are the one box
+a viewer can identify without being told.
+
+Pause after "proposes a move" — that is where the eye reaches the vault. Land on "withdraw": it is the
+whole claim, and the slide's last line repeats it.
 
 ---
 
