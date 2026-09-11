@@ -8,6 +8,81 @@ only — and the owner postponed it rather than ship a deployment we could not d
 
 ---
 
+# Per-prize answers
+
+Each prize form asks the same three things. Below is the text to paste, one block per sponsor.
+**Every link is pinned to a commit**, so the line numbers cannot drift out from under a judge.
+
+## Uniswap
+
+**Why we qualify.** unisafe adds `moveLiquidity` — one operator call that closes a position in one
+Uniswap v4 pool and opens it in another inside a **single `unlock`**, with one settlement pass and one
+oracle-guarded swap: 337,035 gas against 381,744 + 21,000 for the withdraw-then-allocate path it
+replaces, and no window where the capital sits idle. It is built straight on `PoolManager` — no
+periphery `PositionManager`, no NFT per position — and we proved a multi-pool `unlock` against a bare
+`PoolManager` before touching the manager.
+
+**Line of code.**
+[`VolatileLPManager.sol#L407`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/src/VolatileLPManager.sol#L398-L410) — the one `POOL_MANAGER.unlock`
+that carries both pools.
+Supporting: [`CrossPoolUnlock.t.sol#L217`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/test/CrossPoolUnlock.t.sol#L217-L249) — the manager-free
+proof, asserting one settlement pass over the currency union.
+
+**Feedback.** v4 keys deltas by `(address, currency)`, not by pool — that is what makes a multi-pool
+`unlock` legal, and it is the single fact this whole feature rests on, yet nothing in the docs says it;
+we only believed it after reading `PoolManager._accountDelta` and writing our own test. Two more worth
+saying out loud: `modifyLiquidity`'s second return value is fees realised on removal *whether or not you
+asked*, and a `swap` can fill partially at `sqrtPriceLimitX96` and return successfully, so the full-fill
+guard is yours to write. Full list: [`FEEDBACK.md`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/FEEDBACK.md).
+
+## Chainlink
+
+**Why we qualify.** An audit found that an operator could deploy principal at a distorted spot price
+without swapping at all, so the guard was extended from swap prices to **every operator action** — adds
+included — and now also bounds how far from the Chainlink reference an operator may park a range. The
+on-chain state change is real: new `ChainlinkPriceOracle` contracts deployed and seeded with feeds on
+five chains, with managers re-pointed at them by their owners.
+
+**Line of code.**
+[`ChainlinkPriceOracle.sol#L317`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/src/oracle/ChainlinkPriceOracle.sol#L308-L318) — `checkOp`'s
+zero-input branch: no swap to judge, so the pool's own price and the position's midpoint are judged
+against the feed instead.
+Supporting: [`BaseLPManager.sol#L377`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/src/BaseLPManager.sol#L370-L380) — the call site, which fails
+closed when the oracle declines.
+
+**Feedback.** Two things cost us time. Feed addresses are not published as a machine-readable per-chain
+index, so a five-chain deploy script ends up carrying a hand-maintained JSON transcribed from the docs
+site ([`script/oracle_feeds.json`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/script/oracle_feeds.json)) — a JSON endpoint keyed by chain id
+and symbol would remove that whole class of transcription error. And the **L2 sequencer uptime feed** —
+the thing that makes an L2 integration fail closed correctly, and which some chains (Unichain) do not
+have at all — is documented away from the Price Feeds quickstart, so it is easy to ship an L2
+integration without ever learning it exists.
+
+## The Graph
+
+**Why we qualify.** Our Substreams package decodes a *class* of contracts rather than an address list —
+the manager registry is built from the factory's own deployment event, so the factory address is the
+only parameter — and it is itself **composed with a published package**, using `ethereum-common`'s
+`index_events` as a block filter: 58,876 blocks in scope on mainnet, 1,149 actually processed. The index
+it feeds is the first source behind both the dApp and a hosted MCP server that answers an agent's
+questions, and every answer names the source that served it and how current that source is.
+
+**Line of code.**
+[`substreams.yaml#L55`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/30991427d38e59996ea1831d526a13b46f47b865/substreams.yaml#L52-L58) — the block filter: our package consuming another
+published package's index, which is the composition itself.
+Supporting: [`graphHistory.ts#L88`](https://gitlab.com/envelop/protocol-v2/stablelp-ui/-/blob/a170d94e09ccee4edede9a96d0f7b772a3cd98d1/insight/sources/graphHistory.ts#L84-L101) — the staleness
+budget that makes an index safe to put in front of an agent: an index further behind head than its
+budget declines and says so, instead of answering confidently with old data.
+
+**Feedback.** Subgraph Studio no longer accepts substreams-powered subgraphs, and it fails *late*:
+`graph build` succeeds, the IPFS upload succeeds, and the node refuses the deployment at the very end —
+a deprecation notice at build time would have saved a day. Second: the sink's progress log counts blocks
+in a way that does not match the Portal's billing counter — we sized a backfill from the log and were
+off by an order of magnitude until we checked the Portal, so the log is easy to mistake for a cost
+estimate.
+
+---
+
 ## 1 · Uniswap — Best Stack Contribution (+ Continuity)
 
 **What it asks**
