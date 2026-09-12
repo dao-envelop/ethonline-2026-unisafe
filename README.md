@@ -107,7 +107,8 @@ be handed something to sign.
 |---|---|
 | [dao-envelop/uni-smart-wallet](https://github.com/dao-envelop/uni-smart-wallet) | Solidity contracts. `StableLPManager`, `VolatileLPManager`, `OpenVolatileLPManager`, the factory, `UniLens`, `ChainlinkPriceOracle`. **`moveLiquidity` lands here.** |
 | [dao-envelop/ethonline-2026-substreams-v4-lp](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp) | Substreams package for the LP-manager event class. |
-| [gitlab.com/envelop/protocol-v2/stablelp-ui](https://gitlab.com/envelop/protocol-v2/stablelp-ui) | The dApp and both MCP servers — the local signer (`mcp/`) and the hosted read/strategy service (`insight/`). Public. |
+| [gitlab.com/envelop/protocol-v2/stablelp-ui](https://gitlab.com/envelop/protocol-v2/stablelp-ui) | The dApp and both MCP servers — the local signer (`mcp/`) and the hosted read/strategy service (`insight/`). Public, and canonical: this is where it is developed. |
+| [dao-envelop/ethonline-2026-frontend-mirror](https://github.com/dao-envelop/ethonline-2026-frontend-mirror) | **GitHub mirror of the above**, full history, for anyone who would rather read it here. Pushed from the same `master`. |
 | [gitlab.com/envelop/protocol-v2](https://gitlab.com/envelop/protocol-v2) | Upstream home of the contracts and the frontend. Both public. |
 
 > Specific file-and-line pointers for each track are in [Where to look](#where-to-look), so you do not

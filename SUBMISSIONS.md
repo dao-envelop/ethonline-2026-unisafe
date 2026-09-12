@@ -222,7 +222,7 @@ estimate.
   the modules; the registry is built from the factory's event
 - [`substreams.yaml`](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp/blob/master/substreams.yaml) —
   the `ethereum-common` import and the block filter, with the numbers in the comment
-- [`insight/sources/`](https://gitlab.com/envelop/protocol-v2/stablelp-ui/-/tree/master/insight/sources) —
+- [`insight/sources/`](https://github.com/dao-envelop/ethonline-2026-frontend-mirror/tree/master/insight/sources) —
   the cascade: index, oracle, log scan, and the staleness rule
 - `https://unisafe.envelop.is/mcp` — the running server; `/healthz` shows per-chain index lag
 
