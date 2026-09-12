@@ -15,3 +15,7 @@ recording to slide does not flash.
 [`../../brand/README.md`](../../brand/README.md) for the font setup. Text wraps on measured width, so
 editing a line cannot silently overflow a column; the script prints where the right column ends
 (keep it under 960).
+
+The [pitch deck](https://dao-envelop.github.io/ethonline-2026-unisafe/) embeds these two
+SVGs as its closing slides (`docs/assets/`), so edit them here and copy across — the deck must
+not drift from what a viewer just watched.

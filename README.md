@@ -2,6 +2,8 @@
 
 **Move liquidity between Uniswap v4 pools in a single transaction, and let an agent decide when to.**
 
+📊 **[The pitch deck](https://dao-envelop.github.io/ethonline-2026-unisafe/)** — eight slides and the two cards that close the demo video. Source in [`docs/`](docs/).
+
 This is the submission hub for [unisafe.envelop.is](https://unisafe.envelop.is) at ETHOnline 2026.
 The code lives in the repositories linked below; this page tells you what we built during the event,
 where to look, and how to run it.
