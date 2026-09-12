@@ -2,7 +2,8 @@
 
 **Move liquidity between Uniswap v4 pools in a single transaction, and let an agent decide when to.**
 
-📊 **[The pitch deck](https://dao-envelop.github.io/ethonline-2026-unisafe/)** — eight slides and the two cards that close the demo video. Source in [`docs/`](docs/).
+🏆 **[Submitted on ETHGlobal](https://ethglobal.com/showcase/unisafe-xndpd)** — project page, with the demo video.
+📊 **[The pitch deck](https://dao-envelop.github.io/ethonline-2026-unisafe/)** — eight slides and the two cards that close the video. Source in [`docs/`](docs/).
 
 This is the submission hub for [unisafe.envelop.is](https://unisafe.envelop.is) at ETHOnline 2026.
 The code lives in the repositories linked below; this page tells you what we built during the event,
@@ -215,7 +216,7 @@ tables — eleven event types plus `position_delta`, the one that actually model
 | D | Hosted read/strategy MCP | ✅ live at `unisafe.envelop.is/mcp`, and the dApp reads it first: index → oracle → chain, with the source named on screen |
 | E | Arc deployment | ⬜ out of this submission — Arc mainnet has no public RPC and the owner postponed it |
 | F | Operator guard extended | ✅ audit 2026-09-04 [H-1] closed; new `ChainlinkPriceOracle` deployed and seeded on five chains 8 Sep, managers re-pointed by their owners |
-| — | Demo video | 🟡 shot and in edit; end cards and the narration script are in [demo/](demo/) |
+| — | Demo video | ✅ recorded, cut and [published with the submission](https://ethglobal.com/showcase/unisafe-xndpd); script, shot list and end cards in [demo/](demo/) |
 
 Submitting to three tracks: **Uniswap**, **The Graph** and **Chainlink**. Arc is not among them.
 
@@ -225,7 +226,8 @@ disagrees with it.
 
 ## Demo
 
-_Video link goes here._
+**[The submission on ETHGlobal](https://ethglobal.com/showcase/unisafe-xndpd)** — the demo video plays there.
+The two cards that close it are the last slides of [the deck](https://dao-envelop.github.io/ethonline-2026-unisafe/).
 
 ## Operator transactions
 

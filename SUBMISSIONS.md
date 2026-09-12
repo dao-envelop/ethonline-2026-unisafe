@@ -289,12 +289,16 @@ as the product itself.
 
 ## What only a person can do
 
-1. **Uniswap Developer Feedback Form** — submit with a link to `FEEDBACK.md`. Required for that track.
-2. **Continuity Track registration** on the Hacker Dashboard, kind "Extend Open Source", for all three.
-3. **The demo video, 2–4 min** — shot and in edit. Narration timed per segment in
-   [demo/VOICEOVER.md](demo/VOICEOVER.md), two end cards in [demo/slides/](demo/slides/). What is left is
-   the edit itself and pasting the published link into the form and into the README's Demo section.
-4. **Submit** on ETHGlobal before **13 September, 12:00 EDT (19:00 MSK)** — one project, three tracks.
+**Submitted:** [unisafe-xndpd](https://ethglobal.com/showcase/unisafe-xndpd). The project page is live and the demo video plays on it.
+
+1. ✅ **The demo video** — recorded, cut and published with the submission. Narration timed per segment
+   in [demo/VOICEOVER.md](demo/VOICEOVER.md), end cards in [demo/slides/](demo/slides/).
+2. ✅ **Submit on ETHGlobal** — done, inside the deadline.
+3. ⬜ **Uniswap Developer Feedback Form** — separate from the ETHGlobal submission, and required for that
+   track. Submit it with the link to [`FEEDBACK.md`](FEEDBACK.md). Not verifiable from here; confirm it
+   was sent.
+4. ⬜ **Continuity Track registration** on the Hacker Dashboard, kind "Extend Open Source". Same — not
+   visible on the public project page, so confirm it is set for all three tracks.
 
 ## Facts worth keeping straight in every form
 
