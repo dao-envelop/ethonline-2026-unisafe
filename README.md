@@ -222,7 +222,64 @@ disagrees with it.
 
 ## Demo
 
-_Video link and transaction hashes go here._
+_Video link goes here._
+
+## Operator transactions
+
+Every call below was sent by the **operator** account `0xD5228C948036eBe777b95f0124548882cbEF05d2` —
+the one the local MCP server signs with. It has never been able to withdraw: there is no code path from
+an operator to the principal, and each of these calls also had to pass the Chainlink guard.
+
+Links go to the canonical explorer, with a Blockscout mirror (`bs`) beside each for anyone the
+Etherscan family blocks.
+
+### Unichain · manager [`0x7C77e35F…`](https://unisafe.envelop.is/manager/130/0x7c77e35faed086b948e68cd2ab534991995c3b3b)
+
+| When (UTC) | Call | Transaction |
+|---|---|---|
+| 11 Sep 09:35 | `moveLiquidity` | [0xc2a93eac…14c888](https://uniscan.xyz/tx/0xc2a93eac8fea442f8e022766dcd2b9d768ca9eed7504bc786c0d42c45014c888) · [bs](https://unichain.blockscout.com/tx/0xc2a93eac8fea442f8e022766dcd2b9d768ca9eed7504bc786c0d42c45014c888) |
+| 11 Sep 05:49 | `moveLiquidity` | [0x89dabe6c…1b5d32](https://uniscan.xyz/tx/0x89dabe6c84f484446a5d4a887153e36412169c9c34adce92c9eaaede971b5d32) · [bs](https://unichain.blockscout.com/tx/0x89dabe6c84f484446a5d4a887153e36412169c9c34adce92c9eaaede971b5d32) |
+| 11 Sep 05:48 | `moveLiquidity` | [0x0169b6cd…642c95](https://uniscan.xyz/tx/0x0169b6cdd634820d151df4292c65f50a1a76c90d7020b2ddbc0dd437a6642c95) · [bs](https://unichain.blockscout.com/tx/0x0169b6cdd634820d151df4292c65f50a1a76c90d7020b2ddbc0dd437a6642c95) |
+| 11 Sep 05:36 | `moveLiquidity` | [0xf95b1775…79f5d4](https://uniscan.xyz/tx/0xf95b17758f7aed13ce3bd85f6b3c9ad620c1c48da4745d118011a7352979f5d4) · [bs](https://unichain.blockscout.com/tx/0xf95b17758f7aed13ce3bd85f6b3c9ad620c1c48da4745d118011a7352979f5d4) |
+| 11 Sep 05:49 | `allocate` | [0xf918c5fd…bd2fc2](https://uniscan.xyz/tx/0xf918c5fde5e518c74f71a55f56aad890ba733d2a5ebe8d89e32ab7f738bd2fc2) · [bs](https://unichain.blockscout.com/tx/0xf918c5fde5e518c74f71a55f56aad890ba733d2a5ebe8d89e32ab7f738bd2fc2) |
+| 10 Sep 11:07 | `claimFees` | [0x53f1b40d…f05abd](https://uniscan.xyz/tx/0x53f1b40ddd36c529608b233bfea5daa5f5061187d999ec035b215a1b38f05abd) · [bs](https://unichain.blockscout.com/tx/0x53f1b40ddd36c529608b233bfea5daa5f5061187d999ec035b215a1b38f05abd) |
+| 10 Sep 11:06 | `claimFees` | [0xf8846d82…b948d2](https://uniscan.xyz/tx/0xf8846d825594f2d28db6bfa6acd5ba48af1b1f8b2b1d14cc1ea1b96b68b948d2) · [bs](https://unichain.blockscout.com/tx/0xf8846d825594f2d28db6bfa6acd5ba48af1b1f8b2b1d14cc1ea1b96b68b948d2) |
+
+**What one `moveLiquidity` looks like on chain** — [`0xc2a93eac…`](https://uniscan.xyz/tx/0xc2a93eac8fea442f8e022766dcd2b9d768ca9eed7504bc786c0d42c45014c888), block 58,370,992,
+560,640 gas, **one transaction**:
+
+- two `ModifyLiquidity` events from the v4 `PoolManager` (`0x1F98…0004`) in **two different pools** —
+  `−1,446,934` liquidity out of pool `0xbd0f3a7c…`, `+13,713,827,842` into pool `0x51f9d63d…`
+- one `Swap`, in the destination pool, because the two pools are two different pairs
+- `FeesCollected` and `ProtocolFeeTaken` — the fees the removal realised, reported rather than swallowed
+- `LiquidityMoved`, then `MetadataUpdate`, so the NFT's rendered state follows in the same transaction
+
+That is the whole claim, visible in one receipt: several pools inside one `unlock`, one settlement pass.
+
+> The 337,035 gas quoted elsewhere is the benchmark — the move against withdraw-then-allocate from
+> **equal fresh state, same pair, no intermediate swap**. This live one costs more because it crosses
+> two different pairs (so it swaps) and runs on cold storage. Both numbers are real; they answer
+> different questions, and neither is the other's correction.
+
+### Arbitrum
+
+| When (UTC) | Call | Transaction | Manager |
+|---|---|---|---|
+| 10 Sep 11:03 | `allocate` | [0xab699054…183d02](https://arbiscan.io/tx/0xab69905460353eed95843c738a6bd2a16b689deb627d38002bdfcb19f3183d02) · [bs](https://arbitrum.blockscout.com/tx/0xab69905460353eed95843c738a6bd2a16b689deb627d38002bdfcb19f3183d02) | 0xCD302d06… |
+| 25 Aug 02:47 | `recenter` | [0xf3c9a118…069447](https://arbiscan.io/tx/0xf3c9a1181c38887bc0e120b25145fe01c4df23b308fcc1a652f71d0ad3069447) · [bs](https://arbitrum.blockscout.com/tx/0xf3c9a1181c38887bc0e120b25145fe01c4df23b308fcc1a652f71d0ad3069447) | 0x60723973… |
+| 22 Aug 02:09 | `recenter` | [0x5647699a…16668f](https://arbiscan.io/tx/0x5647699acfd84c2d86ad6bff101a08d3f8c97d1de592ed32cb6a886a2016668f) · [bs](https://arbitrum.blockscout.com/tx/0x5647699acfd84c2d86ad6bff101a08d3f8c97d1de592ed32cb6a886a2016668f) | 0x60723973… |
+| 21 Aug 09:47 | `recenter` | [0x14c74b26…53b2de](https://arbiscan.io/tx/0x14c74b261e4cff262d282bf964793747271d41ebea635abb01f9f8c68553b2de) · [bs](https://arbitrum.blockscout.com/tx/0x14c74b261e4cff262d282bf964793747271d41ebea635abb01f9f8c68553b2de) | 0x60723973… |
+| 21 Aug 01:47 | `recenter` | [0x52dab1cb…10e6c0](https://arbiscan.io/tx/0x52dab1cb7a8982908b45f566624339e99503b41d55d26bef08c6fdccd510e6c0) · [bs](https://arbitrum.blockscout.com/tx/0x52dab1cb7a8982908b45f566624339e99503b41d55d26bef08c6fdccd510e6c0) | 0x60723973… |
+| 20 Aug 09:18 | `recenter` | [0xb6add35d…d1c429](https://arbiscan.io/tx/0xb6add35d1ec498f4762ecdd19a662e8c3cd0018e357372cb90c6ad9644d1c429) · [bs](https://arbitrum.blockscout.com/tx/0xb6add35d1ec498f4762ecdd19a662e8c3cd0018e357372cb90c6ad9644d1c429) | 0x60723973… |
+| 20 Aug 01:57 | `recenter` | [0x61a08d03…90b5ab](https://arbiscan.io/tx/0x61a08d03643b40972157ad875c958730557ce092412cfef172c175344190b5ab) · [bs](https://arbitrum.blockscout.com/tx/0x61a08d03643b40972157ad875c958730557ce092412cfef172c175344190b5ab) | 0x60723973… |
+| 20 Aug 01:56 | `recenter` | [0x60a14159…1e39e7](https://arbiscan.io/tx/0x60a14159681a306c7993b6ad18229a12284e905bb34f97290d4fd425a11e39e7) · [bs](https://arbitrum.blockscout.com/tx/0x60a14159681a306c7993b6ad18229a12284e905bb34f97290d4fd425a11e39e7) | 0x60723973… |
+| 25 Jul 06:24 | `recenter` | [0x8cea5486…b5af05](https://arbiscan.io/tx/0x8cea54861633a1f0be8b44b63cb96dbaa530239e5cb940e8d7aefb80d9b5af05) · [bs](https://arbitrum.blockscout.com/tx/0x8cea54861633a1f0be8b44b63cb96dbaa530239e5cb940e8d7aefb80d9b5af05) | 0x60723973… |
+
+The `recenter` calls from 25 July onward are the operator loop that predates the hackathon, listed under
+[what existed before](#what-existed-before-the-hackathon) — the same key, the same server, before any of
+this event's work existed. `moveLiquidity` does not appear here: Arbitrum's managers were created before
+the 2.1.0 release, and managers are non-upgradeable clones.
+
 
 What is ready: the [shot list](demo/SCRIPT.md), the [narration script](demo/VOICEOVER.md) timed segment by segment, and two [end cards](demo/slides/) with their own [voice-over](demo/slides/VOICEOVER.md). Submission artwork — square logo and 16:9 cover — is in [brand/](brand/).
 

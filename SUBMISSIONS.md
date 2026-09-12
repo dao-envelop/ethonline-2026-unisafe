@@ -22,6 +22,12 @@ replaces, and no window where the capital sits idle. It is built straight on `Po
 periphery `PositionManager`, no NFT per position — and we proved a multi-pool `unlock` against a bare
 `PoolManager` before touching the manager.
 
+**Live on chain.** Four operator `moveLiquidity` calls on Unichain, 10–11 September. In
+[`0xc2a93eac…`](https://uniscan.xyz/tx/0xc2a93eac8fea442f8e022766dcd2b9d768ca9eed7504bc786c0d42c45014c888)
+the v4 `PoolManager` emits `ModifyLiquidity` for **two different pools** inside one transaction —
+liquidity out of `0xbd0f3a7c…`, into `0x51f9d63d…`, with the balancing swap between them. Full list with
+mirrors: [README § Operator transactions](README.md#operator-transactions).
+
 **Line of code.**
 [`VolatileLPManager.sol#L407`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/src/VolatileLPManager.sol#L398-L410) — the one `POOL_MANAGER.unlock`
 that carries both pools.
@@ -42,6 +48,12 @@ without swapping at all, so the guard was extended from swap prices to **every o
 included — and now also bounds how far from the Chainlink reference an operator may park a range. The
 on-chain state change is real: new `ChainlinkPriceOracle` contracts deployed and seeded with feeds on
 five chains, with managers re-pointed at them by their owners.
+
+**Live on chain.** Every operator call in
+[README § Operator transactions](README.md#operator-transactions) passed this guard to land — the
+`moveLiquidity` and `allocate` calls on Unichain through the new spot-and-midpoint branch, the Arbitrum
+`recenter` calls through the swap branch. A refusal is not a log line, it is a revert, so a successful
+operator transaction *is* the oracle's signature on it.
 
 **Line of code.**
 [`ChainlinkPriceOracle.sol#L317`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/src/oracle/ChainlinkPriceOracle.sol#L308-L318) — `checkOp`'s
