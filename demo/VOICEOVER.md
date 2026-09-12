@@ -42,3 +42,27 @@ fifth of the segment asserting it buys nothing.
 > Create a manager, deposit your coins, and the manager opens a position.
 
 Keep "manager" as the word — it is what the UI calls it, and the viewer is looking at it.
+
+## 3 · 22 s — creating a manager, and why the pool list is the product
+
+**Recommended — 49 words**
+
+> I already have managers running, but let's create one. ⏸
+> The step that matters is choosing the pools. ⏸
+> A manager can only ever hold positions in the pools you pick here — that is the security model. ⏸
+> No operator and no agent can reach anything else. ⏸
+> Up to thirty-two, chosen once.
+
+49 words is 20 seconds of speech, and the four ⏸ beats spend the rest. Do not fill them: the pauses are
+where the claim lands, and this is the one segment in the video that explains *why* an agent is safe to
+authorise at all.
+
+**"Chosen once" is literally true** — `_registerPool` is internal and reachable only from `initialize`;
+there is no function that adds a pool to a live manager, and the managers are non-upgradeable clones.
+Say it plainly.
+
+**If you come in fast and need one more line:**
+
+> It is the boundary, drawn before anyone is let in.
+
+Say "thirty-two", not "thirty two" — and let the number sit at the end, where the UI shows the count.
