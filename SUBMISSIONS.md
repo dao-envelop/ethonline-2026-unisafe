@@ -279,8 +279,9 @@ as the product itself.
 
 1. **Uniswap Developer Feedback Form** — submit with a link to `FEEDBACK.md`. Required for that track.
 2. **Continuity Track registration** on the Hacker Dashboard, kind "Extend Open Source", for all three.
-3. **The demo video, 2–4 min** — script and shot list in [demo/SCRIPT.md](demo/SCRIPT.md). Preconditions
-   are met except funding the demo manager enough that the numbers read on screen.
+3. **The demo video, 2–4 min** — shot and in edit. Narration timed per segment in
+   [demo/VOICEOVER.md](demo/VOICEOVER.md), two end cards in [demo/slides/](demo/slides/). What is left is
+   the edit itself and pasting the published link into the form and into the README's Demo section.
 4. **Submit** on ETHGlobal before **13 September, 12:00 EDT (19:00 MSK)** — one project, three tracks.
 
 ## Facts worth keeping straight in every form

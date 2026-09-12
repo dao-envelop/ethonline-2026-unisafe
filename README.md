@@ -143,6 +143,7 @@ should not look like a week's work.
 | C | Local MCP reduced to key, calldata, policy and broadcast; gains `propose_move` / `execute_move` | unisafe |
 | D | Hosted read/strategy MCP over HTTP: history, yield, pool ranking, `suggest_move` | unisafe |
 | E | Deployment on Arc (chain 5042) with Chainlink feeds and a USDC/EURC pool | uni-smart-wallet |
+| F | The operator price guard extended from swaps to **every** operator action, plus a bound on where a range may sit and one operator call per transaction | uni-smart-wallet |
 
 The split in C and D is the point, not an implementation detail. The component that holds the operator
 key ends up with **no outbound HTTP at all except RPC**. The hosted service can suggest a move; it can
@@ -207,10 +208,11 @@ tables — eleven event types plus `position_delta`, the one that actually model
 |---|---|---|
 | A | `moveLiquidity` | ✅ implemented, deployed on all five chains 8 Sep (release 2.1.0), and in the dApp — an owner can move a position between pools, not only an agent |
 | B | Substreams package | ✅ published on [substreams.dev](https://substreams.dev/packages/envelop-lp-v4); SQL sink live on Ethereum and Unichain; composed with a published third-party package. Subgraph Studio no longer accepts substreams-powered subgraphs — see below |
-| C | Local MCP slimmed + `move` | ✅ published — `@envelop/mcp-lp` 1.0.0 |
+| C | Local MCP slimmed + `move` | ✅ published — `@envelop/mcp-lp`, now 1.2.0: two bugs that broke a cross-pool move were found on a live manager after 1.0.0 and fixed in 1.1.0 and 1.2.0 |
 | D | Hosted read/strategy MCP | ✅ live at `unisafe.envelop.is/mcp`, and the dApp reads it first: index → oracle → chain, with the source named on screen |
 | E | Arc deployment | ⬜ out of this submission — Arc mainnet has no public RPC and the owner postponed it |
-| — | Demo video | 🟡 script and shot list written; one precondition left |
+| F | Operator guard extended | ✅ audit 2026-09-04 [H-1] closed; new `ChainlinkPriceOracle` deployed and seeded on five chains 8 Sep, managers re-pointed by their owners |
+| — | Demo video | 🟡 shot and in edit; end cards and the narration script are in [demo/](demo/) |
 
 Submitting to three tracks: **Uniswap**, **The Graph** and **Chainlink**. Arc is not among them.
 
@@ -220,7 +222,9 @@ disagrees with it.
 
 ## Demo
 
-_Video and transaction hashes go here._
+_Video link and transaction hashes go here._
+
+What is ready: the [shot list](demo/SCRIPT.md), the [narration script](demo/VOICEOVER.md) timed segment by segment, and two [end cards](demo/slides/) with their own [voice-over](demo/slides/VOICEOVER.md). Submission artwork — square logo and 16:9 cover — is in [brand/](brand/).
 
 ---
 

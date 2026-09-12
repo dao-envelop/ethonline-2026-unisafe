@@ -115,7 +115,7 @@ Subgraph Studio deployment.
 
 ### C — Local MCP server, slimmed
 
-**Repo:** [unisafe](https://github.com/dao-envelop/unisafe) · package `@envelop/mcp-lp`
+**Repo:** [stablelp-ui](https://gitlab.com/envelop/protocol-v2/stablelp-ui) · package `@envelop/mcp-lp`
 
 Keeps: keystore and signing, the policy guard, the propose → simulate → execute loop, calldata building,
 and the handful of on-chain reads needed to build and verify a transaction. Gains `propose_move` /
@@ -127,7 +127,7 @@ changelog entry saying where the moved tools went.
 
 ### D — Hosted read/strategy service
 
-**Repo:** [unisafe](https://github.com/dao-envelop/unisafe)
+**Repo:** [stablelp-ui](https://gitlab.com/envelop/protocol-v2/stablelp-ui)
 
 One process, two surfaces: MCP over streamable HTTP, and plain REST for the frontend. No keys, read-only,
 cacheable, shared. Serves position history, realised yield, impermanent loss, fee series, operator lists,
@@ -190,10 +190,11 @@ Updated as work lands. Each entry links the commits that produced it.
 |---|---|---|
 | A — `moveLiquidity` | ✅ deployed, and in the dApp | `5a77c41` → `cc7d732`; deploy `520f542`; UI in `task_095` |
 | B — Substreams package | ✅ published, sink live, composed | `1803105` → `3099142`, releases to `v0.2.4`, registry `envelop-lp-v4` |
-| C — local MCP slimmed | ✅ published | `84bc0bb` → `a25ebd3`, tag `mcp-v1.0.0` |
+| C — local MCP slimmed | ✅ published | `84bc0bb` → `a25ebd3`, tags `mcp-v1.0.0` … `mcp-v1.2.0` |
 | D — hosted service | ✅ live, and the app reads it | `task/087`, `089`, `090`, `094`, `100`, `101` |
 | E — Arc deployment | ⬜ postponed by the owner | no public mainnet RPC |
-| Demo video | 🟡 script written | one precondition left |
+| F — operator guard extended | ✅ deployed on five chains | audit `2026-09-04` [H-1]; `task_053`, `task_054` |
+| Demo video | 🟡 shot, in edit | end cards and timed narration in `demo/` |
 
 **9–10 Sep — the app reads what the agent reads, and a broken day proved the design.**
 
@@ -225,6 +226,25 @@ The endpoint was swapped for another provider's; the cursor proved portable, so 
 block it had stopped on and the missing fees appeared. The watchdog's own acceptance run then found two
 defects in it before anyone could rely on it — a test that shared state with the thing it tested, and a
 rule that watched the index's freshness but never whether the process was alive.
+
+**12 Sep — the published 1.0.0 could not do the demo, and two releases say why.**
+
+`propose_move` in 1.0.0 copied the freed position's `amount0`/`amount1` slot-for-slot into the
+destination pool. Two pools are two different pairs, so that retyped one token's units as another's; the
+ratio still matched the destination price, nothing downstream objected, and the transaction reverted
+on-chain settling a currency the manager does not hold. On a manager whose pools are all distinct pairs
+that was *every* move — the headline flow of the video. 1.1.0 crosses the principal **by currency
+address** and reports what does not fit as idle.
+
+1.2.0 then fixed the other half. Since `task_054` the manager measures an operator's range midpoint
+against the oracle reference, and the server was still centring on the pool tick — so a move or a
+recenter was refused exactly when the pool had drifted, which is when either is worth doing. Measured on
+a live manager while it was failing: 20.4 bps off on one pool, 17.7 on another, against a 10 bps bound.
+The dApp had centred on the reference since `task_091`; only the server was missed.
+
+Worth stating plainly because it is the pattern, not the incident: both bugs sat in the component that
+talks to two systems at once, and neither could be caught by a test that mocks one of them. The live
+manager found both.
 
 **8 Sep — 1.0.0 is out, and the release gate failed for a reason worth keeping.**
 
