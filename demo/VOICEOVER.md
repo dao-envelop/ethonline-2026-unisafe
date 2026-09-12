@@ -66,3 +66,37 @@ Say it plainly.
 > It is the boundary, drawn before anyone is let in.
 
 Say "thirty-two", not "thirty two" — and let the number sit at the end, where the UI shows the count.
+
+## 4 · 9 s — the manager is an NFT
+
+**22 words**
+
+> Every manager is an NFT — hold the token, own the funds. ⏸
+> Its metadata is drawn on chain, updating as the positions do.
+
+"Drawn on chain" is exact: `tokenURI` renders through `WalletPositionDescriptor`, which walks the open
+salts and values each position itself; every mutation emits ERC-4906 `MetadataUpdate`. No server draws
+this. Worth saying precisely — half the audience has only seen NFTs whose art is a URL.
+
+## 5 · 7 s — the operator
+
+**18 words**
+
+> Here is the key part: you can authorise an operator to manage the positions — and only manage them.
+
+The last four words are the segment. Do not drop them to save time; without them this is just a
+permissions screen, and with them it is the reason the rest of the video exists.
+
+## 6 · 7 s — authorising it
+
+**17 words**
+
+> I already have an EVM account for this. Paste the address, sign the transaction, and it's authorised.
+
+Say "E-V-M", three letters.
+
+---
+
+**Note on the arithmetic:** these three were given as 35 seconds, but 9 + 7 + 7 is 23. Either there are
+~12 seconds of silent screen between them, or a fourth beat is missing. Say which and the gap gets a
+line — or leave it silent, which is a fine choice right after the operator claim lands.
