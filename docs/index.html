@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>unisafe — ETHOnline 2026</title>
+    <link rel="icon" href="assets/logo-512.svg" />
+
+    <!-- Reveal.js 5.x from CDN, same zero-build setup as the other Envelop deck. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css" id="theme" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Hanken+Grotesk:wght@400;600&family=JetBrains+Mono:wght@500&display=swap"
+    />
+
+    <style>
+      /* The app's own tokens (stablelp-ui/tailwind.config.ts), so the deck, the artwork and the
+         product are one palette rather than three. */
+      :root {
+        --bg: #0a0c10;
+        --s1: #101319;
+        --accent: #34e3ac;
+        --mint: #4afebf;
+        --tx: #eaeef4;
+        --tx2: #9aa4b2;
+        --tx3: #626c7a;
+      }
+      .reveal-viewport { background: var(--bg); }
+      .reveal {
+        font-family: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+        font-size: 32px;
+        color: var(--tx2);
+      }
+      .reveal h1, .reveal h2, .reveal h3 {
+        font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+        text-transform: none;
+        letter-spacing: -0.02em;
+        color: var(--tx);
+      }
+      .reveal h1 { font-size: 2.1em; }
+      .reveal h2 { font-size: 1.45em; }
+      .reveal h3 { font-size: 1.05em; color: var(--accent); }
+      .reveal strong { color: var(--tx); font-weight: 600; }
+      .reveal em { color: var(--accent); font-style: normal; }
+      .reveal a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(52, 227, 172, 0.35); }
+      .reveal code, .reveal pre { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+      .reveal :not(pre) > code {
+        color: var(--mint);
+        background: rgba(52, 227, 172, 0.1);
+        padding: 0.1em 0.3em;
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+      .reveal li { margin: 0.35em 0; }
+      .reveal .lede { color: var(--tx); font-size: 1.15em; line-height: 1.35; }
+      .reveal .subtitle { color: var(--tx2); font-size: 0.72em; }
+      .reveal .muted { color: var(--tx3); font-size: 0.6em; }
+      /* One number, given the room a number deserves. */
+      .reveal .figure {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 1.7em;
+        color: var(--mint);
+        letter-spacing: -0.02em;
+      }
+      .reveal .badge {
+        display: inline-block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.5em;
+        color: var(--accent);
+        border: 1px solid rgba(52, 227, 172, 0.38);
+        border-radius: 999px;
+        padding: 0.15em 0.7em;
+        margin: 0 0.2em;
+        vertical-align: middle;
+      }
+      .reveal table { font-size: 0.66em; color: var(--tx2); }
+      .reveal table th { color: var(--tx3); font-weight: 500; }
+      .reveal section img { border: none; box-shadow: none; background: none; }
+      /* The video's end cards, dropped in as vector so they are identical to the ones on screen. */
+      .reveal .card { display: block; margin: 0 auto; max-width: 100%; max-height: 78vh; }
+      .reveal .logo { width: 132px; margin: 0 auto 0.3em; display: block; }
+      .reveal .cols { display: flex; gap: 1.4em; text-align: left; }
+      .reveal .cols > div { flex: 1; }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- Authored in slides.md; loaded over fetch, so this page must be served over http(s). -->
+        <section
+          data-markdown="slides.md"
+          data-separator="^\r?\n---\r?\n$"
+          data-separator-vertical="^\r?\n--\r?\n$"
+          data-separator-notes="^Note:"
+          data-charset="utf-8"
+        ></section>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t",
+        transition: "fade",
+        controls: true,
+        progress: true,
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      });
+    </script>
+  </body>
+</html>
