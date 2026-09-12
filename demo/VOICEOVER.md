@@ -100,3 +100,22 @@ Say "E-V-M", three letters.
 **Note on the arithmetic:** these three were given as 35 seconds, but 9 + 7 + 7 is 23. Either there are
 ~12 seconds of silent screen between them, or a fourth beat is missing. Say which and the gap gets a
 line — or leave it silent, which is a fine choice right after the operator claim lands.
+
+## 7 · 12 s — the address is set, and the guard behind it
+
+**28 words**
+
+> There it is — authorised. ⏸
+> And the operator cannot move your money at a bad price: every action is checked against a Chainlink
+> feed. ⏸ Out of bounds, it reverts.
+
+**A precision worth keeping.** The guard is a *price* bound, not a judge of good and bad trades — it
+compares the swap price, the pool's own price and where a range would sit against the feed, and refuses
+outside the tolerance. Say "at a bad price", not "economically wrong": the narrower claim is the one
+that is true, and it is the more impressive one, because it is enforced rather than promised.
+
+**If you have room, the strongest single line here:**
+
+> With no feed configured, the operator cannot act at all.
+
+That is fail-closed, and it is unusual enough to be worth the breath.
