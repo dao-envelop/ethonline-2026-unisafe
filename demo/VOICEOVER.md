@@ -119,3 +119,62 @@ that is true, and it is the more impressive one, because it is enforced rather t
 > With no feed configured, the operator cannot act at all.
 
 That is fail-closed, and it is unusual enough to be worth the breath.
+
+---
+
+# 1:06 → 2:43
+
+## 8 · 1:06–1:13 (7 s) — the agents page · 18 words
+
+> Connecting an agent has its own page — slash agents. Claude, Codex, whatever you run: the instructions
+> are there.
+
+Read the URL as "slash agents"; spelling out the domain costs three seconds and the screen shows it.
+
+## 9 · 1:13–1:22 (9 s) — starting the agent · 23 words
+
+> I'll start my agent in a folder of its own, with nothing set up, and simply ask what it can do with this.
+
+"Nothing set up" is worth the words — an empty folder is the proof that the skill and the server carry
+the knowledge, not a prepared workspace.
+
+## 10 · 1:22–1:29 (7 s) — it connects · 18 words
+
+> First it connects to our hosted MCP server — no key, read only — and lists what it can do.
+
+## 11 · 1:29–1:43 (14 s) — why that server exists · 34 words
+
+> That server exists for one job: letting an agent read your manager — the positions it holds, the fees
+> they've earned. ⏸ It holds no key, so the worst it can do is tell you something.
+
+The last clause is the one to land. A read-only server is not a limitation to apologise for; it is the
+reason it can be hosted at all.
+
+## 12 · 1:44–1:50 (6 s) — the address · 15 words
+
+> Just copy the manager's address out of the browser and hand it to your agent.
+
+## 13 · 1:50–1:58 (8 s) — the answer · 19 words
+
+> Give it a moment, and you get the whole picture — every position, what it's worth, what it has earned.
+
+## 14 · 1:58–2:06 (8 s) — another chain · 19 words
+
+> Let's try another manager, on a different chain. Same question, same tools — the agent doesn't need to
+> know which.
+
+## 15 · 2:06–2:18 (12 s) — the local server · 29 words
+
+> To let the agent actually send transactions, you install the local MCP server — the one that holds the
+> operator account we authorised earlier. ⏸ That key never leaves your machine.
+
+## 16 · 2:18–2:43 (25 s) — the move · 56 words
+
+> Now we can ask for something real: move liquidity from one pool into another, with a swap in the middle,
+> in a single transaction. ⏸
+> The agent works out the route, the local server signs it, and the contract checks the price before
+> anything moves. ⏸
+> Back in the browser: closed in one pool, open in the other.
+
+56 words is 22 seconds; the two beats spend the rest. This is the payoff of the whole video — three
+parties each doing exactly one job, named in order. Do not add a fourth clause.
