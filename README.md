@@ -19,8 +19,9 @@ we are asking to be judged.
 
 unisafe manages Uniswap v4 liquidity through a **manager NFT**. Whoever holds the NFT owns the funds;
 they may authorise **operators** — bots, agents, other people — who can rebalance the position but can
-never withdraw. That boundary is enforced by the contract, not by trust: operator swaps are additionally
-gated by a Chainlink price oracle, and there is no code path from an operator to the owner's principal.
+never withdraw. That boundary is enforced by the contract, not by trust: every operator action is
+additionally gated by a Chainlink price oracle, and there is no code path from an operator to the
+owner's principal.
 
 The gap is what happens when a *different pool* becomes the better place to be. Today an operator has to:
 
@@ -36,8 +37,9 @@ locked to a single pool.
 
 ## What we are building
 
-**`moveLiquidity`** — one operator call that pulls liquidity from one or more pools and adds it to others
-inside a single Uniswap v4 `unlock`, with one settlement pass and one oracle-guarded swap path.
+**`moveLiquidity`** — one operator call that pulls liquidity out of one pool and adds it into another
+inside a single Uniswap v4 `unlock`, with one settlement pass and one oracle-guarded swap path. (One
+source, one destination: the array form did not fit the contract-size budget — see [PLAN.md](PLAN.md), workstream A.)
 
 This is possible because v4 keys deltas by `(address, currency)` rather than by pool, and `unlock`
 checks exactly one thing on exit — that no non-zero delta remains. Nothing in v4 restricts a callback to
@@ -50,7 +52,11 @@ Around that, three supporting pieces:
   fees and operator changes are queryable without a full log scan;
 - a **split of our MCP server** into a thin local signer and a hosted read/strategy service, so the
   component holding the operator key does nothing but build, check and sign transactions;
-- a **deployment on Arc**, Circle's stablecoin-native L1, where USDC is the gas token.
+- an **extension of the operator price guard** from swap prices to *every* operator action, plus a bound
+  on where an operator may park a range.
+
+A fourth piece — a deployment on **Arc**, Circle's stablecoin-native L1 — was planned and dropped:
+its mainnet has no public RPC endpoint. See [Status](#status).
 
 **The end-to-end scenario, which is also the demo:** the hosted service ranks v4 pools by yield from
 indexed data, proposes a better one, the local MCP server builds `moveLiquidity`, checks it against its
@@ -81,7 +87,7 @@ flowchart LR
   subgraph graph["The Graph"]
     SUB["Substreams package<br/>map_events · map_positions"]
     DB[("Postgres index<br/>db_out")]
-    SG["Substreams-powered subgraph<br/>graph_out"]
+    SG["Substreams-powered subgraph<br/>graph_out — written and verified,<br/>not deployable: Studio no longer accepts these"]
     SUB --> DB
     SUB --> SG
   end
@@ -108,7 +114,7 @@ be handed something to sign.
 
 | Repository | What is in it |
 |---|---|
-| [dao-envelop/uni-smart-wallet](https://github.com/dao-envelop/uni-smart-wallet) | Solidity contracts. `StableLPManager`, `VolatileLPManager`, `OpenVolatileLPManager`, the factory, `UniLens`, `ChainlinkPriceOracle`. **`moveLiquidity` lands here.** |
+| [dao-envelop/uni-smart-wallet](https://github.com/dao-envelop/uni-smart-wallet) | Solidity contracts. `StableLPManager`, `VolatileLPManager`, `OpenVolatileLPManager`, the factory, `UniLens`, `ChainlinkPriceOracle`. **`moveLiquidity` lives here.** |
 | [dao-envelop/ethonline-2026-substreams-v4-lp](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp) | Substreams package for the LP-manager event class. |
 | [gitlab.com/envelop/protocol-v2/stablelp-ui](https://gitlab.com/envelop/protocol-v2/stablelp-ui) | The dApp and both MCP servers — the local signer (`mcp/`) and the hosted read/strategy service (`insight/`). Public, and canonical: this is where it is developed. |
 | [dao-envelop/ethonline-2026-frontend-mirror](https://github.com/dao-envelop/ethonline-2026-frontend-mirror) | **GitHub mirror of the above**, full history, for anyone who would rather read it here. Pushed from the same `master`. |
@@ -143,9 +149,9 @@ should not look like a week's work.
 | # | Workstream | Repository |
 |---|---|---|
 | A | `moveLiquidity` — cross-pool move in one `unlock`, oracle-guarded, reporting realised fees | uni-smart-wallet |
-| B | Substreams package over the manager's events + SQL sink | substreams-uniswap-v4-lp |
-| C | Local MCP reduced to key, calldata, policy and broadcast; gains `propose_move` / `execute_move` | unisafe |
-| D | Hosted read/strategy MCP over HTTP: history, yield, pool ranking, `suggest_move` | unisafe |
+| B | Substreams package over the manager's events + SQL sink | ethonline-2026-substreams-v4-lp |
+| C | Local MCP reduced to key, calldata, policy and broadcast; gains `propose_move` / `execute_move` | stablelp-ui |
+| D | Hosted read/strategy MCP over HTTP: history, yield, pool ranking, `suggest_move` | stablelp-ui |
 | E | Deployment on Arc (chain 5042) with Chainlink feeds and a USDC/EURC pool | uni-smart-wallet |
 | F | The operator price guard extended from swaps to **every** operator action, plus a bound on where a range may sit and one operator call per transaction | uni-smart-wallet |
 
@@ -157,8 +163,6 @@ anything is signed.
 ---
 
 ## Where to look
-
-*Filled in as each piece lands — see [Status](#status).*
 
 **Uniswap** — the new operation and the test that justifies it, on `master` and deployed on all five chains:
 - [`src/VolatileLPManager.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/src/VolatileLPManager.sol)
@@ -192,17 +196,13 @@ anything is signed.
   Unichain (manager creation at 54,551,071, first allocate at 54,572,737) — see that repo's README
 - the hosted service reads the index live at `unisafe.envelop.is/mcp`, with the fallback cascade below
 
-**Chainlink** — price feeds gating operator swaps:
+**Chainlink** — price feeds gating every operator action:
 - [`src/oracle/ChainlinkPriceOracle.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/src/oracle/ChainlinkPriceOracle.sol)
   and `_guardSwap` in [`src/BaseLPManager.sol`](https://github.com/dao-envelop/uni-smart-wallet/blob/master/src/BaseLPManager.sol)
 - the on-chain state change: a new `ChainlinkPriceOracle` deployed on all five chains on 8 September and
   seeded with feeds, plus the spot branch added during the event — `check` with `amountIn == 0` compares
   the pool's `slot0` against the Chainlink reference in both directions, which is what now gates an
   operator's liquidity adds and not only its swaps
-- feed wiring on Arc _(pending — Arc mainnet has 30 feeds; see [Status](#status))_
-
-**Arc** — deployment and addresses _(pending)_
-
 **Storage** — [`db/`](db/): what the Substreams SQL sink writes and why it is shaped that way. Twelve
 tables — eleven event types plus `position_delta`, the one that actually models a position.
 
@@ -218,7 +218,7 @@ tables — eleven event types plus `position_delta`, the one that actually model
 | F | Operator guard extended | ✅ audit 2026-09-04 [H-1] closed; new `ChainlinkPriceOracle` deployed and seeded on five chains 8 Sep, managers re-pointed by their owners |
 | — | Demo video | ✅ recorded, cut and [published with the submission](https://ethglobal.com/showcase/unisafe-xndpd); script, shot list and end cards in [demo/](demo/) |
 
-Submitting to three tracks: **Uniswap**, **The Graph** and **Chainlink**. Arc is not among them.
+Submitted to three tracks: **Uniswap**, **The Graph** and **Chainlink**. Arc is not among them.
 
 Event runs 4–13 September 2026. The full plan, the reasoning behind each decision and a dated progress
 log are in **[PLAN.md](PLAN.md)** — published before the work, and corrected in place when reality
@@ -228,6 +228,10 @@ disagrees with it.
 
 **[The submission on ETHGlobal](https://ethglobal.com/showcase/unisafe-xndpd)** — the demo video plays there.
 The two cards that close it are the last slides of [the deck](https://dao-envelop.github.io/ethonline-2026-unisafe/).
+
+How it was made: the [shot list](demo/SCRIPT.md), the [narration script](demo/VOICEOVER.md) timed segment
+by segment, and the [end cards](demo/slides/) with their own [voice-over](demo/slides/VOICEOVER.md).
+Submission artwork — square logo and 16:9 cover — is in [brand/](brand/).
 
 ## Operator transactions
 
@@ -285,8 +289,6 @@ The `recenter` calls from 25 July onward are the operator loop that predates the
 this event's work existed. `moveLiquidity` does not appear here: Arbitrum's managers were created before
 the 2.1.0 release, and managers are non-upgradeable clones.
 
-
-What is ready: the [shot list](demo/SCRIPT.md), the [narration script](demo/VOICEOVER.md) timed segment by segment, and two [end cards](demo/slides/) with their own [voice-over](demo/slides/VOICEOVER.md). Submission artwork — square logo and 16:9 cover — is in [brand/](brand/).
 
 ---
 

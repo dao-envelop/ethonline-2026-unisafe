@@ -93,12 +93,17 @@ because the subclass inherits everything, every byte is spent twice.
 **What that constraint decided (4 Sep).** The intended shape — arrays of pulls and arrays of adds — cost
 947 bytes against 858, because arrays of structs need their own calldata-to-memory encoder and memory
 decoder. The operation therefore takes **one source and one destination**; an operator repeats the call to
-move several positions. Deduplicating the swap path returned 233 bytes and paid for the rest. Final:
+move several positions. Deduplicating the swap path returned 233 bytes and paid for the rest. Sizes at that commit:
 Volatile 24,432 (144 free), OpenVolatile 24,372 (204), Stable 24,178 (398).
+
+**Corrected 12 Sep.** Those are not the released figures, and `FEEDBACK.md` quotes the released ones.
+Task 052 returned 77 bytes and tasks 053–054 spent 113, so release 2.1.0 ships **OpenVolatile 24,530
+(46 free), Volatile 24,468 (108), Stable 24,114 (462)**. The 858 above is what we had *before* the
+operation, which is the number the array form was rejected against.
 
 ### B — Substreams package
 
-**Repo:** [substreams-uniswap-v4-lp](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp)
+**Repo:** [ethonline-2026-substreams-v4-lp](https://github.com/dao-envelop/ethonline-2026-substreams-v4-lp)
 
 A reusable package that decodes the event surface of the *class* "LP manager on top of Uniswap v4" into
 typed protobuf — one message type per event, never raw bytes or JSON — with a store keyed off manager
@@ -111,7 +116,12 @@ to be built on Uniswap's own `ModifyLiquidity` logs, where pool, range, exact li
 appear together — which also makes a recenter decompose for free into a removal row and an addition row.
 
 It emits both a SQL sink output and a subgraph output, so the same package feeds a database and a
-Subgraph Studio deployment.
+subgraph from one decoder.
+
+**Corrected 8 Sep.** `graph_out` and the schema are written and verified against a live chain, but
+Subgraph Studio no longer accepts substreams-powered subgraphs — the build and the IPFS upload succeed
+and the node refuses the deployment. The second Graph product in this submission is therefore the
+published package and its composition with `ethereum-common`, not a hosted subgraph.
 
 ### C — Local MCP server, slimmed
 
@@ -166,6 +176,10 @@ If time runs short we cut in this order: the subgraph output, then the optional 
 then the Arc frontend. The one thing we do not cut is Substreams indexing Arc — no other index covers that
 chain, and it is where the data genuinely comes from nowhere else.
 
+**Corrected 11 Sep.** Arc went entirely, including the indexing this paragraph called uncuttable: its
+mainnet publishes no public RPC endpoint, so there was nothing to deploy against or index. The index
+follows Ethereum and Unichain.
+
 ## Things that could stop us
 
 - **Contract size.** The only real technical risk in A. Mitigated by calling existing internals instead of
@@ -194,7 +208,7 @@ Updated as work lands. Each entry links the commits that produced it.
 | D — hosted service | ✅ live, and the app reads it | `task/087`, `089`, `090`, `094`, `100`, `101` |
 | E — Arc deployment | ⬜ postponed by the owner | no public mainnet RPC |
 | F — operator guard extended | ✅ deployed on five chains | audit `2026-09-04` [H-1]; `task_053`, `task_054` |
-| Demo video | 🟡 shot, in edit | end cards and timed narration in `demo/` |
+| Demo video | ✅ published with the submission | [showcase](https://ethglobal.com/showcase/unisafe-xndpd); end cards and timed narration in `demo/` |
 
 **9–10 Sep — the app reads what the agent reads, and a broken day proved the design.**
 

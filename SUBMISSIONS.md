@@ -106,9 +106,9 @@ estimate.
 |---|---|
 | Public **GitHub** repository | ✅ [dao-envelop/uni-smart-wallet](https://github.com/dao-envelop/uni-smart-wallet), mirror in step with GitLab |
 | `FEEDBACK.md` | ✅ [in the repo root](https://github.com/dao-envelop/uni-smart-wallet/blob/master/FEEDBACK.md) — seven items, all from this integration; [copy here](FEEDBACK.md) |
-| Uniswap Developer Feedback Form linking to it | ⬜ **person** — submit the form with the link |
+| Uniswap Developer Feedback Form linking to it | ✅ submitted by the owner, 13 Sep |
 | README points at the contracts and lines | ✅ [README](https://github.com/dao-envelop/uni-smart-wallet#readme) names `src/VolatileLPManager.sol`, both tests and `FEEDBACK.md` |
-| Continuity Track registration | ⬜ **person** — Hacker Dashboard, "Extend Open Source" |
+| Continuity Track registration | ✅ done on the Hacker Dashboard, "Extend Open Source" |
 
 **Short description (≤ 280 chars)**
 
@@ -164,7 +164,7 @@ estimate.
 | Composition of **≥ 2 Graph products** | ✅ our published Substreams package **plus** a published third-party package consumed as a dependency |
 | **Live data** from a Graph provider | ✅ The Graph Market key against StreamingFast endpoints; SQL sink following Ethereum and Unichain heads |
 | More than one query to one subgraph | ✅ eleven decoded event types, a position model, two sinks |
-| Public repo + video 2–4 min | ✅ repo · 🟡 video |
+| Public repo + video 2–4 min | ✅ repo · ✅ [video](https://ethglobal.com/showcase/unisafe-xndpd) |
 
 **What AI Tooling asks**
 
@@ -236,7 +236,7 @@ estimate.
 |---|---|
 | Improve an existing project using **Price Feeds** | ✅ the operator guard was extended from swaps to liquidity adds |
 | **On-chain state change** (mandatory) | ✅ a new `ChainlinkPriceOracle` deployed on five chains on 8 Sep and seeded with feeds; managers point at it via `setPriceOracle` |
-| Continuity registration | ⬜ **person** |
+| Continuity registration | ✅ done |
 
 **Short description (≤ 280 chars)**
 
@@ -294,11 +294,11 @@ as the product itself.
 1. ✅ **The demo video** — recorded, cut and published with the submission. Narration timed per segment
    in [demo/VOICEOVER.md](demo/VOICEOVER.md), end cards in [demo/slides/](demo/slides/).
 2. ✅ **Submit on ETHGlobal** — done, inside the deadline.
-3. ⬜ **Uniswap Developer Feedback Form** — separate from the ETHGlobal submission, and required for that
-   track. Submit it with the link to [`FEEDBACK.md`](FEEDBACK.md). Not verifiable from here; confirm it
-   was sent.
-4. ⬜ **Continuity Track registration** on the Hacker Dashboard, kind "Extend Open Source". Same — not
-   visible on the public project page, so confirm it is set for all three tracks.
+3. ✅ **Uniswap Developer Feedback Form** — filled in and sent, with the link to
+   [`FEEDBACK.md`](FEEDBACK.md).
+4. ✅ **Continuity Track registration** — "Extend Open Source", confirmed by the owner.
+
+Nothing is outstanding.
 
 ## Facts worth keeping straight in every form
 
