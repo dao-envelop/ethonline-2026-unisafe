@@ -35,11 +35,11 @@ Supporting: [`CrossPoolUnlock.t.sol#L217`](https://github.com/dao-envelop/uni-sm
 proof, asserting one settlement pass over the currency union.
 
 **Feedback.** v4 keys deltas by `(address, currency)`, not by pool — that is what makes a multi-pool
-`unlock` legal, and it is the single fact this whole feature rests on, yet nothing in the docs says it;
-we only believed it after reading `PoolManager._accountDelta` and writing our own test. Two more worth
-saying out loud: `modifyLiquidity`'s second return value is fees realised on removal *whether or not you
-asked*, and a `swap` can fill partially at `sqrtPriceLimitX96` and return successfully, so the full-fill
-guard is yours to write. Full list: [`FEEDBACK.md`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/FEEDBACK.md).
+`unlock` legal, and it is the single fact this whole feature rests on, yet no page says it; the Batch
+Modify guide asserts the conclusion without the mechanism, so we read `PoolManager._accountDelta` and
+wrote our own test. Two more: contract size decided our API and there is no external library to push
+plumbing into, and `POST /lp/pool_info` cannot answer "which v4 pools exist for this pair" — it refuses
+with `V4 pools require fee and tick_spacing`. Full list: [`FEEDBACK.md`](https://github.com/dao-envelop/uni-smart-wallet/blob/48006df4f28fbd9548e7e8600c782927954df7d0/FEEDBACK.md).
 
 ## Chainlink
 
