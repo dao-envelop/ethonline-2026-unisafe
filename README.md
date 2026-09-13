@@ -56,7 +56,7 @@ Around that, three supporting pieces:
   on where an operator may park a range.
 
 A fourth piece — a deployment on **Arc**, Circle's stablecoin-native L1 — was planned and dropped:
-its mainnet has no public RPC endpoint. See [Status](#status).
+its mainnet has no public RPC endpoint — row E below.
 
 **The end-to-end scenario, which is also the demo:** the hosted service ranks v4 pools by yield from
 indexed data, proposes a better one, the local MCP server builds `moveLiquidity`, checks it against its
@@ -144,21 +144,28 @@ should not look like a week's work.
   Arbitrum manager since July 2026.
 - **An event indexer** (Envelop oracle) covering five chains, serving position history to the frontend.
 
-## What we are building during the event
+## What we built during the event
 
-| # | Workstream | Repository |
-|---|---|---|
-| A | `moveLiquidity` — cross-pool move in one `unlock`, oracle-guarded, reporting realised fees | uni-smart-wallet |
-| B | Substreams package over the manager's events + SQL sink | ethonline-2026-substreams-v4-lp |
-| C | Local MCP reduced to key, calldata, policy and broadcast; gains `propose_move` / `execute_move` | stablelp-ui |
-| D | Hosted read/strategy MCP over HTTP: history, yield, pool ranking, `suggest_move` | stablelp-ui |
-| E | Deployment on Arc (chain 5042) with Chainlink feeds and a USDC/EURC pool | uni-smart-wallet |
-| F | The operator price guard extended from swaps to **every** operator action, plus a bound on where a range may sit and one operator call per transaction | uni-smart-wallet |
+| | Workstream | Repo | Where it got to |
+|---|---|---|---|
+| ✅ | **A — `moveLiquidity`**: cross-pool move in one `unlock`, oracle-guarded, reporting realised fees | uni-smart-wallet | Deployed on all five chains 8 Sep (release 2.1.0), and in the dApp — an owner can move a position between pools, not only an agent |
+| ✅ | **B — Substreams package** over the manager's events, plus a SQL sink | ethonline-2026-substreams-v4-lp | Published on [substreams.dev](https://substreams.dev/packages/envelop-lp-v4); sink live on Ethereum and Unichain; composed with a published third-party package. Subgraph Studio no longer accepts substreams-powered subgraphs — see below |
+| ✅ | **C — Local MCP** reduced to key, calldata, policy and broadcast; gains `propose_move` / `execute_move` | stablelp-ui | Published as `@envelop/mcp-lp`, now 1.2.0: two bugs that broke a cross-pool move were found on a live manager after 1.0.0 and fixed in 1.1.0 and 1.2.0 |
+| ✅ | **D — Hosted read/strategy MCP** over HTTP: history, yield, pool ranking, `suggest_move` | stablelp-ui | Live at `unisafe.envelop.is/mcp`, and the dApp reads it first: index → oracle → chain, with the source named on screen |
+| ⬜ | **E — Deployment on Arc** (chain 5042) with Chainlink feeds and a USDC/EURC pool | uni-smart-wallet | Out of this submission — Arc mainnet has no public RPC and the owner postponed it |
+| ✅ | **F — Operator price guard** extended from swaps to **every** operator action, plus a bound on where a range may sit and one operator call per transaction | uni-smart-wallet | Audit 2026-09-04 [H-1] closed; new `ChainlinkPriceOracle` deployed and seeded on five chains 8 Sep, managers re-pointed by their owners |
+| ✅ | **Demo video** | — | Recorded, cut and [published with the submission](https://ethglobal.com/showcase/unisafe-xndpd); script, shot list and end cards in [demo/](demo/) |
 
 The split in C and D is the point, not an implementation detail. The component that holds the operator
 key ends up with **no outbound HTTP at all except RPC**. The hosted service can suggest a move; it can
 never produce a signature, and everything it suggests is re-derived and re-checked locally before
 anything is signed.
+
+Submitted to three tracks: **Uniswap**, **The Graph** and **Chainlink**. Arc is not among them.
+
+Event runs 4–13 September 2026. The full plan, the reasoning behind each decision and a dated progress
+log are in **[PLAN.md](PLAN.md)** — published before the work, and corrected in place when reality
+disagrees with it.
 
 ---
 
@@ -203,26 +210,9 @@ anything is signed.
   seeded with feeds, plus the spot branch added during the event — `check` with `amountIn == 0` compares
   the pool's `slot0` against the Chainlink reference in both directions, which is what now gates an
   operator's liquidity adds and not only its swaps
+
 **Storage** — [`db/`](db/): what the Substreams SQL sink writes and why it is shaped that way. Twelve
 tables — eleven event types plus `position_delta`, the one that actually models a position.
-
-## Status
-
-| | | |
-|---|---|---|
-| A | `moveLiquidity` | ✅ implemented, deployed on all five chains 8 Sep (release 2.1.0), and in the dApp — an owner can move a position between pools, not only an agent |
-| B | Substreams package | ✅ published on [substreams.dev](https://substreams.dev/packages/envelop-lp-v4); SQL sink live on Ethereum and Unichain; composed with a published third-party package. Subgraph Studio no longer accepts substreams-powered subgraphs — see below |
-| C | Local MCP slimmed + `move` | ✅ published — `@envelop/mcp-lp`, now 1.2.0: two bugs that broke a cross-pool move were found on a live manager after 1.0.0 and fixed in 1.1.0 and 1.2.0 |
-| D | Hosted read/strategy MCP | ✅ live at `unisafe.envelop.is/mcp`, and the dApp reads it first: index → oracle → chain, with the source named on screen |
-| E | Arc deployment | ⬜ out of this submission — Arc mainnet has no public RPC and the owner postponed it |
-| F | Operator guard extended | ✅ audit 2026-09-04 [H-1] closed; new `ChainlinkPriceOracle` deployed and seeded on five chains 8 Sep, managers re-pointed by their owners |
-| — | Demo video | ✅ recorded, cut and [published with the submission](https://ethglobal.com/showcase/unisafe-xndpd); script, shot list and end cards in [demo/](demo/) |
-
-Submitted to three tracks: **Uniswap**, **The Graph** and **Chainlink**. Arc is not among them.
-
-Event runs 4–13 September 2026. The full plan, the reasoning behind each decision and a dated progress
-log are in **[PLAN.md](PLAN.md)** — published before the work, and corrected in place when reality
-disagrees with it.
 
 ## Demo
 
